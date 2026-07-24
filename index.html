@@ -1,0 +1,1993 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#090d18" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>BillBuddy</title>
+  <style>
+    :root {
+      --primary: #0f766e;
+      --primary-dark: #115e59;
+      --primary-soft: #ccfbf1;
+      --accent: #14b8a6;
+      --bg: #f4f7f7;
+      --surface: #ffffff;
+      --surface-2: #f8fafc;
+      --text: #17202a;
+      --muted: #64748b;
+      --border: #dce5e5;
+      --danger: #b42318;
+      --danger-soft: #fee4e2;
+      --success: #067647;
+      --success-soft: #dcfae6;
+      --warning: #b54708;
+      --warning-soft: #fffaeb;
+      --shadow: 0 12px 32px rgba(15, 118, 110, 0.09);
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background: var(--bg);
+    }
+
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; }
+    .hidden { display: none !important; }
+
+    .login-page {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      background: linear-gradient(135deg, #ecfdfb 0%, #f8fafc 55%, #ffffff 100%);
+    }
+
+    .login-hero {
+      padding: 64px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      background:
+        radial-gradient(circle at 10% 15%, rgba(20, 184, 166, 0.22), transparent 34%),
+        radial-gradient(circle at 80% 80%, rgba(15, 118, 110, 0.16), transparent 34%);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      font-size: 1.25rem;
+    }
+
+    .brand-mark {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border-radius: 14px;
+      color: white;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      box-shadow: 0 10px 20px rgba(15, 118, 110, 0.24);
+    }
+
+    .hero-title {
+      margin: 42px 0 18px;
+      max-width: 650px;
+      font-size: clamp(2.5rem, 6vw, 5.2rem);
+      line-height: 0.98;
+      letter-spacing: -0.065em;
+    }
+
+    .hero-copy {
+      max-width: 600px;
+      color: var(--muted);
+      font-size: 1.1rem;
+      line-height: 1.7;
+    }
+
+    .feature-row {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 36px;
+      max-width: 680px;
+    }
+
+    .feature-pill {
+      padding: 16px;
+      border: 1px solid rgba(15, 118, 110, 0.14);
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(8px);
+    }
+
+    .feature-pill strong { display: block; margin-bottom: 4px; }
+    .feature-pill span { color: var(--muted); font-size: 0.88rem; }
+
+    .login-panel {
+      display: grid;
+      place-items: center;
+      padding: 28px;
+    }
+
+    .login-card {
+      width: min(440px, 100%);
+      padding: 32px;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      background: rgba(255, 255, 255, 0.94);
+      box-shadow: var(--shadow);
+    }
+
+    .login-card h2 { margin: 0 0 8px; font-size: 1.8rem; }
+    .login-card > p { color: var(--muted); margin: 0 0 26px; line-height: 1.55; }
+
+    .field { display: grid; gap: 7px; margin-bottom: 16px; }
+    .field label, .field-label { font-weight: 700; font-size: 0.88rem; }
+
+    input, select, textarea {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 11px 12px;
+      color: var(--text);
+      background: white;
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px rgba(20, 184, 166, 0.12);
+    }
+
+    textarea { resize: vertical; }
+
+    .btn {
+      border: 0;
+      border-radius: 12px;
+      padding: 11px 16px;
+      font-weight: 750;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: transform 0.15s, opacity 0.15s, background 0.15s;
+    }
+
+    .btn:hover { transform: translateY(-1px); }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    .btn-primary { color: white; background: var(--primary); }
+    .btn-primary:hover { background: var(--primary-dark); }
+    .btn-secondary { color: var(--primary-dark); background: var(--primary-soft); }
+    .btn-ghost { color: var(--text); background: transparent; border: 1px solid var(--border); }
+    .btn-danger { color: var(--danger); background: var(--danger-soft); }
+    .btn-block { width: 100%; }
+
+    .demo-box {
+      margin-top: 18px;
+      padding: 14px;
+      border-radius: 14px;
+      color: #344054;
+      background: var(--warning-soft);
+      border: 1px solid #fedf89;
+      font-size: 0.88rem;
+      line-height: 1.5;
+    }
+
+    .demo-actions { display: flex; gap: 8px; margin-top: 10px; }
+    .login-error { color: var(--danger); min-height: 20px; font-size: 0.88rem; }
+
+    .app-shell {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 268px 1fr;
+    }
+
+    .sidebar {
+      position: fixed;
+      inset: 0 auto 0 0;
+      width: 268px;
+      z-index: 40;
+      display: flex;
+      flex-direction: column;
+      padding: 22px 16px;
+      color: #e6fffb;
+      background: #0b3b3a;
+      border-right: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .sidebar .brand { padding: 4px 10px 22px; color: white; }
+    .sidebar .brand-mark { width: 38px; height: 38px; }
+
+    .nav-list { display: grid; gap: 5px; margin-top: 10px; }
+    .nav-btn {
+      width: 100%;
+      border: 0;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 13px;
+      border-radius: 12px;
+      color: #b9d8d5;
+      background: transparent;
+      text-align: left;
+      font-weight: 700;
+    }
+
+    .nav-btn:hover { color: white; background: rgba(255,255,255,0.08); }
+    .nav-btn.active { color: white; background: var(--primary); }
+    .nav-icon { width: 22px; text-align: center; }
+
+    .sidebar-footer {
+      margin-top: auto;
+      padding: 14px 10px 4px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .user-mini { display: flex; align-items: center; gap: 10px; min-width: 0; }
+    .avatar {
+      width: 40px;
+      height: 40px;
+      flex: 0 0 auto;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      font-weight: 800;
+      color: var(--primary-dark);
+      background: var(--primary-soft);
+    }
+
+    .user-mini-text { min-width: 0; }
+    .user-mini-text strong, .user-mini-text span {
+      display: block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .user-mini-text span { margin-top: 3px; color: #9cc5c0; font-size: 0.78rem; }
+
+    .main-area { grid-column: 2; min-width: 0; }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 25;
+      height: 76px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 28px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(244, 247, 247, 0.88);
+      backdrop-filter: blur(12px);
+    }
+
+    .topbar-title h1 { margin: 0; font-size: 1.32rem; }
+    .topbar-title p { margin: 4px 0 0; color: var(--muted); font-size: 0.84rem; }
+    .topbar-actions { display: flex; align-items: center; gap: 10px; }
+    .mobile-menu { display: none; }
+
+    .content { padding: 28px; max-width: 1500px; margin: 0 auto; }
+    .page { display: none; }
+    .page.active { display: block; }
+
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 18px;
+      margin-bottom: 22px;
+    }
+    .page-header h2 { margin: 0; font-size: 1.75rem; letter-spacing: -0.025em; }
+    .page-header p { margin: 7px 0 0; color: var(--muted); }
+    .header-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+    .grid { display: grid; gap: 18px; }
+    .stats-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .two-col { grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.65fr); }
+    .form-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+    .card {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: 0 5px 18px rgba(15, 23, 42, 0.035);
+    }
+
+    .card-body { padding: 20px; }
+    .card-header {
+      padding: 18px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .card-header h3 { margin: 0; font-size: 1rem; }
+    .card-header p { margin: 4px 0 0; color: var(--muted); font-size: 0.82rem; }
+
+    .stat-card { padding: 20px; }
+    .stat-label { color: var(--muted); font-size: 0.86rem; font-weight: 650; }
+    .stat-value { margin-top: 9px; font-size: 1.8rem; font-weight: 850; letter-spacing: -0.04em; }
+    .stat-note { margin-top: 7px; color: var(--muted); font-size: 0.8rem; }
+    .positive { color: var(--success); }
+    .negative { color: var(--danger); }
+
+    .empty-state {
+      padding: 42px 22px;
+      text-align: center;
+      color: var(--muted);
+    }
+    .empty-icon { font-size: 2.4rem; margin-bottom: 10px; }
+    .empty-state strong { display: block; color: var(--text); margin-bottom: 5px; }
+
+    .list { display: grid; }
+    .list-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 15px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    .list-item:last-child { border-bottom: 0; }
+    .list-main { flex: 1; min-width: 0; }
+    .list-main strong, .list-main span { display: block; }
+    .list-main strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .list-main span { margin-top: 4px; color: var(--muted); font-size: 0.82rem; }
+    .list-amount { text-align: right; font-weight: 800; }
+    .list-amount small { display: block; margin-top: 4px; color: var(--muted); font-weight: 500; }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 5px 9px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 750;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+    }
+    .badge-admin { color: #6941c6; background: #f4f3ff; border-color: #d9d6fe; }
+    .badge-success { color: var(--success); background: var(--success-soft); border-color: #abefc6; }
+    .badge-warning { color: var(--warning); background: var(--warning-soft); border-color: #fedf89; }
+
+    .filters {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+    .filters input, .filters select { width: auto; min-width: 180px; }
+
+    .expense-form { display: grid; gap: 20px; }
+    .section-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .section-title h3 { margin: 0; font-size: 1rem; }
+
+    .payer-grid, .member-chip-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+    }
+
+    .select-chip { position: relative; }
+    .select-chip input { position: absolute; opacity: 0; pointer-events: none; }
+    .select-chip span {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 9px 11px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: white;
+      font-weight: 650;
+      font-size: 0.84rem;
+      cursor: pointer;
+      user-select: none;
+    }
+    .select-chip input:checked + span {
+      color: var(--primary-dark);
+      background: var(--primary-soft);
+      border-color: #5eead4;
+      box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.1);
+    }
+
+    .item-table-wrap { overflow-x: auto; }
+    .item-table { width: 100%; min-width: 1060px; border-collapse: collapse; }
+    .item-table th, .item-table td {
+      padding: 10px 8px;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+      vertical-align: top;
+    }
+    .item-table th { color: var(--muted); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; }
+    .item-table input { padding: 9px 10px; border-radius: 9px; }
+    .item-people { display: flex; flex-wrap: wrap; gap: 5px; max-width: 360px; }
+    .mini-person {
+      position: relative;
+    }
+    .mini-person input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+    .mini-person span {
+      display: inline-flex;
+      width: 31px;
+      height: 31px;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      background: white;
+      font-size: 0.7rem;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .mini-person input:checked + span { color: white; background: var(--primary); border-color: var(--primary); }
+
+    .item-tax-toggle {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      min-height: 34px;
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 800;
+      cursor: pointer;
+      user-select: none;
+      white-space: nowrap;
+    }
+    .item-tax-toggle input {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      opacity: 0;
+      pointer-events: none;
+    }
+    .item-tax-box {
+      width: 25px;
+      height: 25px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      color: transparent;
+      background: #0d1422;
+      transition: background 0.15s, border-color 0.15s, color 0.15s, box-shadow 0.15s;
+    }
+    .item-tax-toggle input:checked + .item-tax-box {
+      color: white;
+      background: var(--primary);
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.14);
+    }
+    .item-tax-toggle input:checked ~ b { color: #ddd6fe; }
+    .item-tax-note {
+      margin-bottom: 16px;
+      padding: 13px 14px;
+      border: 1px solid var(--border);
+      border-radius: 13px;
+      color: var(--muted);
+      background: var(--surface-2);
+      font-size: 0.82rem;
+      line-height: 1.45;
+    }
+    .item-tax-note strong { color: var(--text); }
+
+    .item-split-mode {
+      min-width: 145px;
+      padding: 9px 10px;
+      border-radius: 9px;
+      font-size: 0.78rem;
+      font-weight: 750;
+    }
+    .portion-row td {
+      padding: 0 8px 12px;
+      background: rgba(139, 92, 246, 0.035);
+    }
+    .portion-panel {
+      padding: 13px 14px;
+      border: 1px solid rgba(139, 92, 246, 0.25);
+      border-radius: 13px;
+      background: rgba(139, 92, 246, 0.065);
+    }
+    .portion-panel-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 11px;
+      color: var(--muted);
+      font-size: 0.78rem;
+      line-height: 1.4;
+    }
+    .portion-panel-header strong { color: var(--text); }
+    .portion-editor { display: flex; flex-wrap: wrap; gap: 9px; }
+    .portion-field {
+      display: grid;
+      grid-template-columns: auto 72px;
+      align-items: center;
+      gap: 8px;
+      min-width: 165px;
+      padding: 8px 9px;
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      background: var(--surface-2);
+    }
+    .portion-field span {
+      overflow: hidden;
+      color: var(--text);
+      font-size: 0.78rem;
+      font-weight: 750;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .portion-field input { width: 72px; padding: 7px 8px; }
+    .bulk-tax-option { margin-bottom: 12px; }
+
+    .totals-box {
+      margin-left: auto;
+      width: min(390px, 100%);
+      padding: 17px;
+      border-radius: 15px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+    }
+
+    .tax-option {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 16px;
+      padding: 14px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: var(--surface-2);
+      cursor: pointer;
+      user-select: none;
+    }
+    .tax-option input {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      opacity: 0;
+      pointer-events: none;
+    }
+    .tax-checkbox {
+      flex: 0 0 auto;
+      width: 23px;
+      height: 23px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      color: transparent;
+      background: var(--surface);
+      font-size: 0.8rem;
+      font-weight: 900;
+      transition: background 0.15s, border-color 0.15s, color 0.15s, box-shadow 0.15s;
+    }
+    .tax-option input:checked + .tax-checkbox {
+      color: white;
+      background: var(--primary);
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.12);
+    }
+    .tax-copy { display: grid; gap: 3px; line-height: 1.35; }
+    .tax-copy strong { font-size: 0.9rem; }
+    .tax-copy small { color: var(--muted); font-size: 0.78rem; }
+    .tax-rate-badge {
+      display: inline-flex;
+      width: fit-content;
+      margin-left: 6px;
+      padding: 2px 7px;
+      border-radius: 999px;
+      color: var(--primary-dark);
+      background: var(--primary-soft);
+      font-size: 0.68rem;
+      font-weight: 850;
+      vertical-align: middle;
+    }
+    input[readonly] {
+      cursor: not-allowed;
+      opacity: 0.78;
+      background: var(--surface-2);
+    }
+    .total-row { display: flex; justify-content: space-between; gap: 16px; margin-bottom: 10px; }
+    .total-row:last-child { margin-bottom: 0; padding-top: 12px; border-top: 1px solid var(--border); font-size: 1.08rem; font-weight: 850; }
+
+    .split-preview { display: grid; gap: 8px; }
+    .split-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 10px 12px;
+      border-radius: 11px;
+      background: var(--surface-2);
+    }
+
+    .upload-zone {
+      padding: 28px;
+      border: 2px dashed #99d5ce;
+      border-radius: 17px;
+      text-align: center;
+      background: #f0fdfa;
+    }
+    .upload-zone.dragging { background: var(--primary-soft); border-color: var(--primary); }
+    .upload-zone input { display: none; }
+    .receipt-preview {
+      max-width: 100%;
+      max-height: 420px;
+      margin: 18px auto 0;
+      display: block;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      object-fit: contain;
+    }
+
+    .friend-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .friend-card { padding: 18px; }
+    .friend-top { display: flex; align-items: center; gap: 12px; }
+    .friend-balance { margin: 18px 0 14px; font-size: 1.25rem; font-weight: 850; }
+    .friend-actions { display: flex; gap: 8px; }
+
+    .table-wrap { overflow-x: auto; }
+    .data-table { width: 100%; border-collapse: collapse; min-width: 760px; }
+    .data-table th, .data-table td { padding: 13px 16px; border-bottom: 1px solid var(--border); text-align: left; }
+    .data-table th { color: var(--muted); font-size: 0.76rem; text-transform: uppercase; letter-spacing: 0.04em; }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: grid;
+      place-items: center;
+      padding: 18px;
+      background: rgba(15, 23, 42, 0.54);
+    }
+    .modal {
+      width: min(520px, 100%);
+      max-height: calc(100vh - 36px);
+      overflow: auto;
+      border-radius: 21px;
+      background: white;
+      box-shadow: 0 24px 80px rgba(15, 23, 42, 0.3);
+    }
+    .modal-header { padding: 20px; display: flex; justify-content: space-between; border-bottom: 1px solid var(--border); }
+    .modal-header h3 { margin: 0; }
+    .modal-body { padding: 20px; }
+    .modal-footer { padding: 16px 20px; display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid var(--border); }
+    .icon-btn { width: 38px; height: 38px; border-radius: 11px; border: 1px solid var(--border); background: white; }
+
+    .toast-container { position: fixed; right: 20px; bottom: 20px; z-index: 150; display: grid; gap: 10px; }
+    .toast {
+      min-width: 280px;
+      max-width: 380px;
+      padding: 13px 15px;
+      border-radius: 13px;
+      color: white;
+      background: #1f2937;
+      box-shadow: var(--shadow);
+      animation: toastIn 0.2s ease-out;
+    }
+    .toast.error { background: var(--danger); }
+    .toast.success { background: var(--success); }
+    @keyframes toastIn { from { opacity: 0; transform: translateY(8px); } }
+
+    .privacy-note {
+      padding: 13px 15px;
+      border-radius: 13px;
+      background: #eff8ff;
+      border: 1px solid #b2ddff;
+      color: #1849a9;
+      font-size: 0.86rem;
+      line-height: 1.5;
+    }
+
+    .sidebar-overlay { display: none; }
+
+    @media (max-width: 1120px) {
+      .stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .two-col { grid-template-columns: 1fr; }
+      .friend-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 820px) {
+      .login-page { grid-template-columns: 1fr; }
+      .login-hero { display: none; }
+      .app-shell { display: block; }
+      .main-area { grid-column: 1; }
+      .sidebar { transform: translateX(-104%); transition: transform 0.22s ease; box-shadow: 20px 0 50px rgba(15, 23, 42, 0.22); }
+      .sidebar.open { transform: translateX(0); }
+      .sidebar-overlay { position: fixed; inset: 0; z-index: 35; background: rgba(15,23,42,0.45); }
+      .sidebar-overlay.show { display: block; }
+      .mobile-menu { display: inline-flex; }
+      .topbar { height: 68px; padding: 0 16px; }
+      .topbar-title p { display: none; }
+      .content { padding: 18px 14px 28px; }
+      .page-header { align-items: stretch; flex-direction: column; }
+      .header-actions .btn { flex: 1; }
+      .form-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 620px) {
+      .login-panel { padding: 14px; }
+      .login-card { padding: 23px 18px; }
+      .stats-grid, .friend-grid { grid-template-columns: 1fr; }
+      .topbar-actions .btn span { display: none; }
+      .filters { display: grid; grid-template-columns: 1fr; }
+      .filters input, .filters select { width: 100%; }
+      .page-header h2 { font-size: 1.5rem; }
+      .card-body { padding: 16px; }
+      .card-header { padding: 15px 16px; }
+    }
+  </style>
+
+  <style id="billbuddy-dark-theme">
+    :root {
+      color-scheme: dark;
+      --primary: #8b5cf6;
+      --primary-dark: #7c3aed;
+      --primary-soft: #2b2350;
+      --accent: #22d3ee;
+      --bg: #090d18;
+      --surface: #111827;
+      --surface-2: #182235;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --border: #29354a;
+      --danger: #fb7185;
+      --danger-soft: rgba(244, 63, 94, 0.14);
+      --success: #4ade80;
+      --success-soft: rgba(34, 197, 94, 0.14);
+      --warning: #fbbf24;
+      --warning-soft: rgba(245, 158, 11, 0.13);
+      --shadow: 0 18px 48px rgba(0, 0, 0, 0.32);
+    }
+
+    html { background: var(--bg); }
+    body {
+      background:
+        radial-gradient(circle at 15% 0%, rgba(139, 92, 246, 0.12), transparent 30rem),
+        radial-gradient(circle at 100% 20%, rgba(34, 211, 238, 0.08), transparent 28rem),
+        var(--bg);
+    }
+
+    .login-page {
+      background:
+        radial-gradient(circle at 12% 18%, rgba(139, 92, 246, 0.2), transparent 34%),
+        radial-gradient(circle at 82% 82%, rgba(34, 211, 238, 0.1), transparent 35%),
+        linear-gradient(135deg, #080b14 0%, #0d1321 52%, #090d18 100%);
+    }
+
+    .login-hero {
+      background:
+        radial-gradient(circle at 10% 15%, rgba(139, 92, 246, 0.2), transparent 34%),
+        radial-gradient(circle at 80% 80%, rgba(34, 211, 238, 0.1), transparent 34%);
+    }
+
+    .brand-mark {
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      box-shadow: 0 12px 28px rgba(139, 92, 246, 0.32);
+    }
+
+    .feature-pill,
+    .login-card,
+    .card,
+    .modal {
+      background: rgba(17, 24, 39, 0.92);
+      border-color: var(--border);
+      box-shadow: var(--shadow);
+    }
+
+    .feature-pill { border-color: rgba(139, 92, 246, 0.3); }
+
+    input,
+    select,
+    textarea,
+    .select-chip span,
+    .mini-person span,
+    .icon-btn {
+      color: var(--text);
+      background: #0d1422;
+      border-color: var(--border);
+    }
+
+    input::placeholder,
+    textarea::placeholder { color: #64748b; }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px rgba(34, 211, 238, 0.12);
+    }
+
+    input[type="date"] { color-scheme: dark; }
+    option { background: #111827; color: var(--text); }
+
+    .btn-primary {
+      color: white;
+      background: linear-gradient(135deg, var(--primary), #6d5dfc);
+      box-shadow: 0 8px 22px rgba(139, 92, 246, 0.2);
+    }
+    .btn-primary:hover { background: linear-gradient(135deg, #9b72ff, var(--primary)); }
+    .btn-secondary { color: #ddd6fe; background: var(--primary-soft); }
+    .btn-ghost { color: var(--text); background: rgba(255, 255, 255, 0.025); }
+    .btn-danger { color: var(--danger); background: var(--danger-soft); }
+
+    .demo-box {
+      color: #e2e8f0;
+      background: rgba(245, 158, 11, 0.1);
+      border-color: rgba(251, 191, 36, 0.3);
+    }
+
+    .sidebar {
+      color: #e2e8f0;
+      background:
+        linear-gradient(180deg, rgba(139, 92, 246, 0.09), transparent 26%),
+        #070b14;
+      border-right-color: rgba(148, 163, 184, 0.14);
+    }
+
+    .nav-btn { color: #94a3b8; }
+    .nav-btn:hover { color: white; background: rgba(148, 163, 184, 0.1); }
+    .nav-btn.active {
+      color: white;
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.95), rgba(109, 93, 252, 0.95));
+      box-shadow: 0 8px 20px rgba(139, 92, 246, 0.2);
+    }
+
+    .topbar {
+      background: rgba(9, 13, 24, 0.86);
+      border-bottom-color: var(--border);
+    }
+
+    .card { box-shadow: 0 8px 26px rgba(0, 0, 0, 0.18); }
+    .list-item { border-bottom-color: var(--border); }
+    button.list-item,
+    [data-expense-id] { color: var(--text) !important; background: transparent !important; }
+    button.list-item:hover,
+    [data-expense-id]:hover { background: rgba(139, 92, 246, 0.06) !important; }
+
+    .avatar {
+      color: #ede9fe;
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.34), rgba(34, 211, 238, 0.18));
+      border: 1px solid rgba(139, 92, 246, 0.38);
+    }
+
+    .badge { color: #cbd5e1; background: #182235; border-color: var(--border); }
+    .badge-admin { color: #ddd6fe; background: rgba(139, 92, 246, 0.15); border-color: rgba(167, 139, 250, 0.35); }
+    .badge-success { color: #86efac; background: var(--success-soft); border-color: rgba(74, 222, 128, 0.3); }
+    .badge-warning { color: #fcd34d; background: var(--warning-soft); border-color: rgba(251, 191, 36, 0.3); }
+
+    .select-chip input:checked + span {
+      color: #ede9fe;
+      background: var(--primary-soft);
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.14);
+    }
+
+    .mini-person input:checked + span {
+      color: white;
+      background: var(--primary);
+      border-color: var(--primary);
+    }
+
+    .totals-box,
+    .split-row { background: var(--surface-2); }
+
+    .upload-zone {
+      background: rgba(34, 211, 238, 0.045);
+      border-color: rgba(34, 211, 238, 0.36);
+    }
+    .upload-zone.dragging {
+      background: rgba(139, 92, 246, 0.12);
+      border-color: var(--primary);
+    }
+
+    .modal-backdrop { background: rgba(0, 0, 0, 0.72); }
+    .privacy-note {
+      color: #bae6fd;
+      background: rgba(14, 165, 233, 0.1);
+      border-color: rgba(56, 189, 248, 0.28);
+    }
+
+    .toast { background: #1e293b; }
+    .toast.error { background: #9f1239; }
+    .toast.success { background: #166534; }
+
+    .sidebar-overlay.show { background: rgba(0, 0, 0, 0.72); }
+    ::selection { background: rgba(139, 92, 246, 0.45); color: white; }
+
+    * { scrollbar-color: #3b4760 #0d1422; }
+  </style>
+</head>
+<body>
+  <section id="loginPage" class="login-page">
+    <div class="login-hero">
+      <div class="brand"><div class="brand-mark">BB</div> BillBuddy</div>
+      <h1 class="hero-title">Share the bill.<br />Keep it simple.</h1>
+      <p class="hero-copy">A private bill-sharing app for your friend group. Scan receipts, assign items, distribute tax fairly, and keep every balance clear.</p>
+      <div class="feature-row">
+        <div class="feature-pill"><strong>Receipt AI</strong><span>Gemini extracts items and totals.</span></div>
+        <div class="feature-pill"><strong>Private by design</strong><span>Members see only related expenses.</span></div>
+        <div class="feature-pill"><strong>Clear balances</strong><span>Settled friends disappear from the list.</span></div>
+      </div>
+    </div>
+
+    <div class="login-panel">
+      <div class="login-card">
+        <div class="brand" style="margin-bottom:26px"><div class="brand-mark">BB</div> BillBuddy</div>
+        <h2>Welcome back</h2>
+        <p>Sign in using an account created for this private BillBuddy group. This starter is not connected to any existing Firebase or GitHub project.</p>
+        <form id="loginForm">
+          <div class="field">
+            <label for="loginEmail">Email</label>
+            <input id="loginEmail" type="email" autocomplete="email" placeholder="you@example.com" required />
+          </div>
+          <div class="field">
+            <label for="loginPassword">Password</label>
+            <input id="loginPassword" type="password" autocomplete="current-password" placeholder="••••••••" required />
+          </div>
+          <div id="loginError" class="login-error"></div>
+          <button class="btn btn-primary btn-block" type="submit">Sign in</button>
+        </form>
+        <div id="firebaseSetupNotice" class="demo-box">
+          <strong>Firebase setup required</strong><br />
+          Add the Firebase Web App configuration to this file before publishing BillBuddy.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div id="appShell" class="app-shell hidden">
+    <aside id="sidebar" class="sidebar">
+      <div class="brand"><div class="brand-mark">BB</div> BillBuddy</div>
+      <nav class="nav-list" aria-label="Main navigation">
+        <button class="nav-btn active" data-page="dashboard"><span class="nav-icon">⌂</span>Dashboard</button>
+        <button class="nav-btn" data-page="expenses"><span class="nav-icon">↕</span>Expenses</button>
+        <button class="nav-btn" data-page="add-expense"><span class="nav-icon">＋</span>Add expense</button>
+        <button class="nav-btn" data-page="receipt"><span class="nav-icon">▤</span>Scan receipt</button>
+        <button class="nav-btn" data-page="friends"><span class="nav-icon">♙</span>Friends</button>
+        <button class="nav-btn" data-page="settlements"><span class="nav-icon">✓</span>Settlements</button>
+        <button id="adminNav" class="nav-btn hidden" data-page="admin"><span class="nav-icon">⚙</span>Admin</button>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="user-mini">
+          <div id="sidebarAvatar" class="avatar">M</div>
+          <div class="user-mini-text"><strong id="sidebarName">Member</strong><span id="sidebarRole">member</span></div>
+        </div>
+      </div>
+    </aside>
+    <div id="sidebarOverlay" class="sidebar-overlay"></div>
+
+    <main class="main-area">
+      <header class="topbar">
+        <div style="display:flex;align-items:center;gap:12px">
+          <button id="mobileMenuBtn" class="icon-btn mobile-menu" aria-label="Open menu">☰</button>
+          <div class="topbar-title"><h1 id="topbarTitle">Dashboard</h1><p id="topbarSubtitle">Your group expense overview</p></div>
+        </div>
+        <div class="topbar-actions">
+          <span id="modeBadge" class="badge badge-warning">Not connected</span>
+          <button id="quickAddBtn" class="btn btn-primary"><span>＋ Add expense</span><b>＋</b></button>
+          <button id="logoutBtn" class="btn btn-ghost"><span>Sign out</span> ⇥</button>
+        </div>
+      </header>
+
+      <div class="content">
+        <section id="page-dashboard" class="page active">
+          <div class="page-header">
+            <div><h2 id="welcomeHeading">Welcome</h2><p>Here is where your balances stand today.</p></div>
+            <div class="header-actions"><button class="btn btn-secondary" data-go="receipt">▤ Scan receipt</button><button class="btn btn-primary" data-go="add-expense">＋ Add manually</button></div>
+          </div>
+          <div class="grid stats-grid">
+            <div class="card stat-card"><div class="stat-label">You are owed</div><div id="statOwed" class="stat-value positive">$0.00</div><div class="stat-note">Across unsettled friends</div></div>
+            <div class="card stat-card"><div class="stat-label">You owe</div><div id="statOwe" class="stat-value negative">$0.00</div><div class="stat-note">Across unsettled friends</div></div>
+            <div class="card stat-card"><div class="stat-label">Net balance</div><div id="statNet" class="stat-value">$0.00</div><div class="stat-note">What remains after offsetting</div></div>
+            <div class="card stat-card"><div class="stat-label">Related expenses</div><div id="statExpenseCount" class="stat-value">0</div><div class="stat-note">Only expenses visible to you</div></div>
+          </div>
+          <div class="grid two-col" style="margin-top:18px">
+            <div class="card">
+              <div class="card-header"><div><h3>Recent expenses</h3><p>Transactions involving your account</p></div><button class="btn btn-ghost" data-go="expenses">View all</button></div>
+              <div id="dashboardExpenseList" class="list"></div>
+            </div>
+            <div class="card">
+              <div class="card-header"><div><h3>Open balances</h3><p>Friends with unsettled amounts</p></div><button class="btn btn-ghost" data-go="friends">Friends</button></div>
+              <div id="dashboardBalanceList" class="list"></div>
+            </div>
+          </div>
+        </section>
+
+        <section id="page-expenses" class="page">
+          <div class="page-header">
+            <div><h2>Expenses</h2><p id="expensePrivacyText">Only transactions involving you are shown.</p></div>
+            <div class="header-actions"><button class="btn btn-secondary" data-go="receipt">Scan receipt</button><button class="btn btn-primary" data-go="add-expense">Add expense</button></div>
+          </div>
+          <div class="filters">
+            <input id="expenseSearch" type="search" placeholder="Search expenses" />
+            <select id="expenseMonth"><option value="all">All dates</option></select>
+            <select id="expensePayer"><option value="all">All payers</option></select>
+          </div>
+          <div class="card"><div id="expenseList" class="list"></div></div>
+        </section>
+
+        <section id="page-add-expense" class="page">
+          <div class="page-header"><div><h2>Add expense</h2><p>Assign each item, choose its HST treatment, and use custom portions only when an equal split does not fit.</p></div></div>
+          <form id="expenseForm" class="expense-form">
+            <div class="card"><div class="card-body">
+              <div class="grid form-grid">
+                <div class="field"><label for="expenseTitle">Description</label><input id="expenseTitle" placeholder="e.g., Dinner, groceries, or movie tickets" required /></div>
+                <div class="field"><label for="expenseDate">Date</label><input id="expenseDate" type="date" required /></div>
+              </div>
+              <div class="field"><span class="field-label">Who paid?</span><div id="payerGrid" class="payer-grid"></div></div>
+              <div class="privacy-note">The expense will be visible only to its participants and the admin. Admin access must also be enforced by Firestore Security Rules.</div>
+            </div></div>
+
+            <div class="card">
+              <div class="card-header"><div><h3>Receipt items</h3><p>Set HST per item and choose equal or custom portions for each item.</p></div><button id="addItemBtn" class="btn btn-secondary" type="button">＋ Add item</button></div>
+              <div class="card-body item-table-wrap">
+                <table class="item-table"><thead><tr><th style="width:22%">Item</th><th style="width:8%">Qty</th><th style="width:12%">Total price</th><th style="width:10%">13% HST</th><th style="width:25%">Shared by</th><th style="width:16%">Split</th><th style="width:55px"></th></tr></thead><tbody id="itemRows"></tbody></table>
+              </div>
+            </div>
+
+            <div class="grid two-col">
+              <div class="card"><div class="card-header"><div><h3>Cost allocation</h3><p>Item price and HST follow the selected equal or custom portions; tip follows each person’s item subtotal.</p></div></div><div class="card-body"><div id="splitPreview" class="split-preview"></div></div></div>
+              <div class="card"><div class="card-body">
+                <label class="tax-option bulk-tax-option" for="applyHstAll">
+                  <input id="applyHstAll" type="checkbox" />
+                  <span class="tax-checkbox">✓</span>
+                  <span class="tax-copy"><strong>Apply 13% HST to all items</strong><small>Bulk option: checks every item. You can still switch individual item boxes on or off afterward.</small></span>
+                </label>
+                <div class="item-tax-note"><strong>Flexible HST:</strong> Use the bulk option when the full receipt is taxable, or control HST separately beside each item for mixed receipts.</div>
+                <div class="field"><label for="expenseTip">Tip</label><input id="expenseTip" type="number" min="0" step="0.01" value="0" /></div>
+                <div class="totals-box" style="margin-top:16px">
+                  <div class="total-row"><span>Item subtotal</span><strong id="subtotalValue">$0.00</strong></div>
+                  <div class="total-row"><span>HST</span><strong id="taxValue">$0.00</strong></div>
+                  <div class="total-row"><span>Tip</span><strong id="tipValue">$0.00</strong></div>
+                  <div class="total-row"><span>Total</span><strong id="grandTotalValue">$0.00</strong></div>
+                </div>
+                <button id="saveExpenseBtn" class="btn btn-primary btn-block" style="margin-top:16px" type="submit">Save expense</button>
+              </div></div>
+            </div>
+          </form>
+        </section>
+
+        <section id="page-receipt" class="page">
+          <div class="page-header"><div><h2>Scan receipt</h2><p>Gemini will extract the receipt. Review each item’s 13% HST checkbox before saving.</p></div></div>
+          <div class="grid two-col">
+            <div class="card"><div class="card-body">
+              <label id="uploadZone" class="upload-zone" for="receiptFile">
+                <input id="receiptFile" type="file" accept="image/*" capture="environment" />
+                <div style="font-size:2.5rem">▤</div>
+                <h3 style="margin:8px 0 5px">Upload or photograph a receipt</h3>
+                <p style="margin:0;color:var(--muted)">JPG, PNG or HEIC. Review all extracted values before saving.</p>
+                <span class="btn btn-secondary" style="margin-top:14px">Choose image</span>
+              </label>
+              <img id="receiptPreview" class="receipt-preview hidden" alt="Receipt preview" />
+            </div></div>
+            <div class="card"><div class="card-header"><div><h3>Receipt scanner</h3><p>Your Gemini key stays inside a Firebase Cloud Function.</p></div></div><div class="card-body">
+              <div id="scanIdle">
+                <div class="privacy-note">The browser sends the selected image to the callable function <strong>scanReceipt</strong>. Do not place a Gemini API key inside this HTML file.</div>
+                <button id="scanReceiptBtn" class="btn btn-primary btn-block" style="margin-top:16px" disabled>Scan with Gemini</button>
+              </div>
+              <div id="scanProgress" class="hidden empty-state"><div class="empty-icon">⌛</div><strong>Reading your receipt</strong><span>Extracting line items and totals…</span></div>
+              <div id="scanResult" class="hidden">
+                <div class="field"><label for="scanMerchant">Merchant</label><input id="scanMerchant" /></div>
+                <div class="field"><label for="scanDate">Date</label><input id="scanDate" type="date" /></div>
+                <div id="scanSummary" class="split-preview"></div>
+                <button id="useScanBtn" class="btn btn-primary btn-block" style="margin-top:16px">Assign items and continue</button>
+              </div>
+            </div></div>
+          </div>
+        </section>
+
+        <section id="page-friends" class="page">
+          <div class="page-header"><div><h2>Friends</h2><p>Only people with an unsettled balance appear below.</p></div><button id="settleAnyBtn" class="btn btn-primary">Settle up</button></div>
+          <div id="friendGrid" class="grid friend-grid"></div>
+        </section>
+
+        <section id="page-settlements" class="page">
+          <div class="page-header"><div><h2>Settlements</h2><p>Payments recorded between group members.</p></div><button id="newSettlementBtn" class="btn btn-primary">Record payment</button></div>
+          <div class="card"><div id="settlementList" class="list"></div></div>
+        </section>
+
+        <section id="page-admin" class="page">
+          <div class="page-header"><div><h2>Admin dashboard</h2><p>Group-wide visibility for account and transaction administration.</p></div></div>
+          <div class="privacy-note" style="margin-bottom:18px">Admin visibility must be granted using a protected Firestore role or Firebase custom claim. Hiding this tab in the browser is not a security control.</div>
+          <div class="grid stats-grid">
+            <div class="card stat-card"><div class="stat-label">Active members</div><div id="adminUserCount" class="stat-value">0</div></div>
+            <div class="card stat-card"><div class="stat-label">All expenses</div><div id="adminExpenseCount" class="stat-value">0</div></div>
+            <div class="card stat-card"><div class="stat-label">Group spending</div><div id="adminSpendTotal" class="stat-value">$0.00</div></div>
+            <div class="card stat-card"><div class="stat-label">Recorded payments</div><div id="adminSettlementCount" class="stat-value">0</div></div>
+          </div>
+          <div class="grid two-col" style="margin-top:18px">
+            <div class="card"><div class="card-header"><h3>Member accounts</h3></div><div class="table-wrap"><table class="data-table"><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th></tr></thead><tbody id="adminUserRows"></tbody></table></div></div>
+            <div class="card"><div class="card-header"><h3>Group pair balances</h3></div><div id="adminBalanceList" class="list"></div></div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <div id="settlementModal" class="modal-backdrop hidden">
+    <div class="modal">
+      <div class="modal-header"><h3>Record a settlement</h3><button class="icon-btn" data-close-modal="settlementModal">✕</button></div>
+      <form id="settlementForm">
+        <div class="modal-body">
+          <div class="field"><label for="settlementFrom">Paid by</label><select id="settlementFrom" required></select></div>
+          <div class="field"><label for="settlementTo">Paid to</label><select id="settlementTo" required></select></div>
+          <div class="field"><label for="settlementAmount">Amount</label><input id="settlementAmount" type="number" min="0.01" step="0.01" required /></div>
+          <div class="field"><label for="settlementDate">Date</label><input id="settlementDate" type="date" required /></div>
+          <div class="field"><label for="settlementNote">Note</label><input id="settlementNote" placeholder="E-transfer" /></div>
+        </div>
+        <div class="modal-footer"><button class="btn btn-ghost" type="button" data-close-modal="settlementModal">Cancel</button><button class="btn btn-primary" type="submit">Save payment</button></div>
+      </form>
+    </div>
+  </div>
+
+  <div id="expenseModal" class="modal-backdrop hidden">
+    <div class="modal">
+      <div class="modal-header"><h3 id="expenseModalTitle">Expense details</h3><button class="icon-btn" data-close-modal="expenseModal">✕</button></div>
+      <div id="expenseModalBody" class="modal-body"></div>
+      <div class="modal-footer"><button class="btn btn-ghost" data-close-modal="expenseModal">Close</button></div>
+    </div>
+  </div>
+
+  <div id="toastContainer" class="toast-container"></div>
+
+  <script type="module">
+    // BillBuddy production app — Firebase Authentication + Cloud Firestore + GitHub Pages
+    // Replace this object with your Firebase Web App configuration.
+    const firebaseConfig = {
+      apiKey: "",
+      authDomain: "",
+      projectId: "",
+      storageBucket: "",
+      messagingSenderId: "",
+      appId: ""
+    };
+
+    const CURRENCY = "CAD";
+    const LOCALE = "en-CA";
+    const HST_RATE = 0.13;
+    const FIREBASE_VERSION = "12.16.0";
+
+    let firebaseEnabled = Boolean(firebaseConfig.apiKey && firebaseConfig.projectId);
+    let auth = null;
+    let db = null;
+    let functions = null;
+    let firebaseApi = {};
+    let unsubscribeExpenses = null;
+    let unsubscribeSettlements = null;
+
+    const state = {
+      currentUser: null,
+      users: [],
+      expenses: [],
+      settlements: [],
+      itemDrafts: [],
+      scannedReceipt: null,
+      activePage: "dashboard"
+    };
+
+    const $ = (selector) => document.querySelector(selector);
+    const $$ = (selector) => [...document.querySelectorAll(selector)];
+    const money = (value) => new Intl.NumberFormat(LOCALE, { style: "currency", currency: CURRENCY }).format(Number(value || 0));
+    const today = () => new Date().toISOString().slice(0, 10);
+    const makeId = () => globalThis.crypto?.randomUUID?.() || `id-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+    const roundMoney = (value) => Math.round((Number(value) + Number.EPSILON) * 100) / 100;
+    const initials = (name = "User") => name.split(/\s+/).map(part => part[0]).join("").slice(0, 2).toUpperCase();
+    const userById = (id) => state.users.find(user => user.id === id) || { id, displayName: "Unknown member", email: "" };
+    const currentIsAdmin = () => state.currentUser?.role === "admin";
+    const escapeHtml = (value = "") => String(value).replace(/[&<>'"]/g, char => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", "'":"&#39;", '"':"&quot;" }[char]));
+
+    function toast(message, type = "") {
+      const element = document.createElement("div");
+      element.className = `toast ${type}`;
+      element.textContent = message;
+      $("#toastContainer").appendChild(element);
+      setTimeout(() => element.remove(), 3600);
+    }
+
+    function setLoading(button, loading, label = "Working…") {
+      if (!button) return;
+      if (loading) {
+        button.dataset.originalText = button.textContent;
+        button.textContent = label;
+        button.disabled = true;
+      } else {
+        button.textContent = button.dataset.originalText || button.textContent;
+        button.disabled = false;
+      }
+    }
+
+    async function initializeFirebase() {
+      if (!firebaseEnabled) {
+        $("#firebaseSetupNotice").classList.remove("hidden");
+        $("#loginError").textContent = "Firebase has not been configured yet.";
+        $("#loginForm button[type='submit']").disabled = true;
+        return;
+      }
+
+      try {
+        const [appMod, authMod, firestoreMod, functionsMod] = await Promise.all([
+          import(`https://www.gstatic.com/firebasejs/${FIREBASE_VERSION}/firebase-app.js`),
+          import(`https://www.gstatic.com/firebasejs/${FIREBASE_VERSION}/firebase-auth.js`),
+          import(`https://www.gstatic.com/firebasejs/${FIREBASE_VERSION}/firebase-firestore.js`),
+          import(`https://www.gstatic.com/firebasejs/${FIREBASE_VERSION}/firebase-functions.js`)
+        ]);
+
+        const app = appMod.initializeApp(firebaseConfig);
+        auth = authMod.getAuth(app);
+        db = firestoreMod.getFirestore(app);
+        functions = functionsMod.getFunctions(app);
+        firebaseApi = { ...authMod, ...firestoreMod, ...functionsMod };
+
+        $("#firebaseSetupNotice").classList.add("hidden");
+        $("#loginForm button[type='submit']").disabled = false;
+        $("#modeBadge").textContent = "Cloud mode";
+        $("#modeBadge").className = "badge badge-success";
+
+        authMod.onAuthStateChanged(auth, async user => {
+          if (!user) {
+            showLogin();
+            stopListeners();
+            return;
+          }
+
+          try {
+            await loadAuthenticatedUser(user);
+          } catch (error) {
+            console.error(error);
+            $("#loginError").textContent = "Your account exists, but its BillBuddy profile could not be loaded.";
+            await authMod.signOut(auth);
+          }
+        });
+      } catch (error) {
+        console.error(error);
+        $("#loginError").textContent = "BillBuddy could not connect to Firebase. Check the configuration.";
+        $("#modeBadge").textContent = "Connection error";
+        $("#modeBadge").className = "badge badge-warning";
+        toast("Firebase initialization failed.", "error");
+      }
+    }
+
+    async function loadAuthenticatedUser(authUser) {
+      const { doc, getDoc } = firebaseApi;
+      const profileSnap = await getDoc(doc(db, "users", authUser.uid));
+      if (!profileSnap.exists() || profileSnap.data().active === false) {
+        await firebaseApi.signOut(auth);
+        $("#loginError").textContent = "This account is not authorized for the friend group.";
+        return;
+      }
+      state.currentUser = { id: authUser.uid, ...profileSnap.data() };
+      await loadUsers();
+      startDataListeners();
+      showApp();
+    }
+
+    async function loadUsers() {
+      const { collection, getDocs, query, where } = firebaseApi;
+      const snapshot = await getDocs(query(collection(db, "users"), where("active", "==", true)));
+      state.users = snapshot.docs.map(document => ({ id: document.id, ...document.data() }));
+    }
+
+    function startDataListeners() {
+      stopListeners();
+      const { collection, onSnapshot, query, where } = firebaseApi;
+      const expenseRef = collection(db, "expenses");
+      const settlementRef = collection(db, "settlements");
+      const expenseQuery = currentIsAdmin() ? query(expenseRef) : query(expenseRef, where("participantIds", "array-contains", state.currentUser.id));
+      const settlementQuery = currentIsAdmin() ? query(settlementRef) : query(settlementRef, where("participantIds", "array-contains", state.currentUser.id));
+
+      unsubscribeExpenses = onSnapshot(expenseQuery, snapshot => {
+        state.expenses = snapshot.docs.map(document => ({ id: document.id, ...document.data() }));
+        renderAll();
+      }, error => toast(`Could not load expenses: ${error.message}`, "error"));
+
+      unsubscribeSettlements = onSnapshot(settlementQuery, snapshot => {
+        state.settlements = snapshot.docs.map(document => ({ id: document.id, ...document.data() }));
+        renderAll();
+      }, error => toast(`Could not load settlements: ${error.message}`, "error"));
+    }
+
+    function stopListeners() {
+      if (unsubscribeExpenses) unsubscribeExpenses();
+      if (unsubscribeSettlements) unsubscribeSettlements();
+      unsubscribeExpenses = null;
+      unsubscribeSettlements = null;
+    }
+
+    function showLogin() {
+      $("#loginPage").classList.remove("hidden");
+      $("#appShell").classList.add("hidden");
+      state.currentUser = null;
+    }
+
+    function showApp() {
+      $("#loginPage").classList.add("hidden");
+      $("#appShell").classList.remove("hidden");
+      $("#adminNav").classList.toggle("hidden", !currentIsAdmin());
+      $("#expensePrivacyText").textContent = currentIsAdmin() ? "Admin view shows every group transaction." : "Only transactions involving you are shown.";
+      $("#sidebarName").textContent = state.currentUser.displayName;
+      $("#sidebarRole").textContent = state.currentUser.role;
+      $("#sidebarAvatar").textContent = initials(state.currentUser.displayName);
+      $("#welcomeHeading").textContent = `Welcome, ${state.currentUser.displayName.split(" ")[0]}`;
+      initializeDraft();
+      renderAll();
+      navigate("dashboard");
+    }
+
+    function visibleExpenses() {
+      if (currentIsAdmin()) return [...state.expenses];
+      return state.expenses.filter(expense => expense.participantIds?.includes(state.currentUser.id));
+    }
+
+    function visibleSettlements() {
+      if (currentIsAdmin()) return [...state.settlements];
+      return state.settlements.filter(settlement => settlement.participantIds?.includes(state.currentUser.id));
+    }
+
+    function calculateUserBalances(userId) {
+      const balances = {};
+      state.users.filter(user => user.id !== userId && user.role !== "admin").forEach(user => { balances[user.id] = 0; });
+
+      state.expenses.forEach(expense => {
+        const payer = expense.paidBy;
+        const splits = expense.splits || {};
+        if (payer === userId) {
+          Object.entries(splits).forEach(([participantId, amount]) => {
+            if (participantId !== userId) balances[participantId] = roundMoney((balances[participantId] || 0) + Number(amount));
+          });
+        } else if (Object.prototype.hasOwnProperty.call(splits, userId)) {
+          balances[payer] = roundMoney((balances[payer] || 0) - Number(splits[userId]));
+        }
+      });
+
+      state.settlements.forEach(settlement => {
+        const amount = Number(settlement.amount || 0);
+        if (settlement.fromUserId === userId) {
+          balances[settlement.toUserId] = roundMoney((balances[settlement.toUserId] || 0) + amount);
+        }
+        if (settlement.toUserId === userId) {
+          balances[settlement.fromUserId] = roundMoney((balances[settlement.fromUserId] || 0) - amount);
+        }
+      });
+
+      return balances;
+    }
+
+    function calculateAllPairBalances() {
+      const pairMap = {};
+      state.expenses.forEach(expense => {
+        Object.entries(expense.splits || {}).forEach(([participantId, amount]) => {
+          if (participantId === expense.paidBy) return;
+          const [a, b] = [participantId, expense.paidBy].sort();
+          const key = `${a}|${b}`;
+          if (!pairMap[key]) pairMap[key] = { a, b, netAowesB: 0 };
+          pairMap[key].netAowesB += participantId === a ? Number(amount) : -Number(amount);
+        });
+      });
+      state.settlements.forEach(settlement => {
+        const [a, b] = [settlement.fromUserId, settlement.toUserId].sort();
+        const key = `${a}|${b}`;
+        if (!pairMap[key]) pairMap[key] = { a, b, netAowesB: 0 };
+        pairMap[key].netAowesB -= settlement.fromUserId === a ? Number(settlement.amount) : -Number(settlement.amount);
+      });
+      return Object.values(pairMap).map(pair => ({ ...pair, netAowesB: roundMoney(pair.netAowesB) })).filter(pair => Math.abs(pair.netAowesB) >= 0.01);
+    }
+
+    function renderAll() {
+      if (!state.currentUser) return;
+      renderDashboard();
+      renderExpenseFilters();
+      renderExpenses();
+      renderFriends();
+      renderSettlements();
+      renderPayerOptions();
+      renderSettlementOptions();
+      renderAdmin();
+      updateDraftTotals();
+    }
+
+    function renderDashboard() {
+      const balances = calculateUserBalances(state.currentUser.id);
+      const values = Object.values(balances);
+      const owed = roundMoney(values.filter(value => value > 0).reduce((sum, value) => sum + value, 0));
+      const owe = roundMoney(Math.abs(values.filter(value => value < 0).reduce((sum, value) => sum + value, 0)));
+      const net = roundMoney(owed - owe);
+      const expenses = visibleExpenses().sort((a, b) => String(b.date).localeCompare(String(a.date)));
+
+      $("#statOwed").textContent = money(owed);
+      $("#statOwe").textContent = money(owe);
+      $("#statNet").textContent = money(net);
+      $("#statNet").className = `stat-value ${net > 0 ? "positive" : net < 0 ? "negative" : ""}`;
+      $("#statExpenseCount").textContent = expenses.length;
+
+      const expenseList = $("#dashboardExpenseList");
+      expenseList.innerHTML = expenses.length ? expenses.slice(0, 5).map(expenseListItem).join("") : emptyHtml("No expenses yet", "Add your first shared expense.", "↕");
+
+      const openBalances = Object.entries(balances).filter(([, amount]) => Math.abs(amount) >= 0.01).sort((a, b) => Math.abs(b[1]) - Math.abs(a[1]));
+      $("#dashboardBalanceList").innerHTML = openBalances.length ? openBalances.slice(0, 5).map(([friendId, amount]) => {
+        const friend = userById(friendId);
+        return `<div class="list-item"><div class="avatar">${initials(friend.displayName)}</div><div class="list-main"><strong>${escapeHtml(friend.displayName)}</strong><span>${amount > 0 ? "owes you" : "you owe"}</span></div><div class="list-amount ${amount > 0 ? "positive" : "negative"}">${money(Math.abs(amount))}</div></div>`;
+      }).join("") : emptyHtml("All settled up", "No open friend balances.", "✓");
+    }
+
+    function expenseListItem(expense) {
+      const payer = userById(expense.paidBy);
+      const myShare = Number(expense.splits?.[state.currentUser.id] || 0);
+      const isPayer = expense.paidBy === state.currentUser.id;
+      const subline = currentIsAdmin() ? `${payer.displayName} paid · ${expense.participantIds?.length || 0} people` : isPayer ? `You paid ${money(expense.total)}` : `${payer.displayName} paid · your share ${money(myShare)}`;
+      return `<button class="list-item" style="width:100%;border-left:0;border-right:0;border-top:0;background:white;text-align:left" data-expense-id="${escapeHtml(expense.id)}"><div class="avatar">${escapeHtml((expense.title || "E")[0].toUpperCase())}</div><div class="list-main"><strong>${escapeHtml(expense.title || "Untitled expense")}</strong><span>${escapeHtml(formatDate(expense.date))} · ${escapeHtml(subline)}</span></div><div class="list-amount">${money(expense.total)}<small>${expense.items?.length || 0} item${expense.items?.length === 1 ? "" : "s"}</small></div></button>`;
+    }
+
+    function renderExpenseFilters() {
+      const expenses = visibleExpenses();
+      const months = [...new Set(expenses.map(expense => String(expense.date || "").slice(0, 7)).filter(Boolean))].sort().reverse();
+      const currentMonth = $("#expenseMonth").value;
+      $("#expenseMonth").innerHTML = `<option value="all">All dates</option>${months.map(month => `<option value="${month}">${new Date(`${month}-01T12:00:00`).toLocaleDateString(LOCALE, { month: "long", year: "numeric" })}</option>`).join("")}`;
+      if (months.includes(currentMonth)) $("#expenseMonth").value = currentMonth;
+
+      const payerIds = [...new Set(expenses.map(expense => expense.paidBy))];
+      const currentPayer = $("#expensePayer").value;
+      $("#expensePayer").innerHTML = `<option value="all">All payers</option>${payerIds.map(id => `<option value="${id}">${escapeHtml(userById(id).displayName)}</option>`).join("")}`;
+      if (payerIds.includes(currentPayer)) $("#expensePayer").value = currentPayer;
+    }
+
+    function renderExpenses() {
+      const search = $("#expenseSearch").value.trim().toLowerCase();
+      const month = $("#expenseMonth").value;
+      const payer = $("#expensePayer").value;
+      const expenses = visibleExpenses()
+        .filter(expense => !search || String(expense.title).toLowerCase().includes(search) || (expense.items || []).some(item => String(item.name).toLowerCase().includes(search)))
+        .filter(expense => month === "all" || String(expense.date).startsWith(month))
+        .filter(expense => payer === "all" || expense.paidBy === payer)
+        .sort((a, b) => String(b.date).localeCompare(String(a.date)));
+      $("#expenseList").innerHTML = expenses.length ? expenses.map(expenseListItem).join("") : emptyHtml("No matching expenses", "Try a different search or add an expense.", "⌕");
+    }
+
+    function renderFriends() {
+      const balances = calculateUserBalances(state.currentUser.id);
+      const open = Object.entries(balances).filter(([, amount]) => Math.abs(amount) >= 0.01).sort((a, b) => Math.abs(b[1]) - Math.abs(a[1]));
+      const grid = $("#friendGrid");
+      if (!open.length) {
+        grid.innerHTML = `<div class="card" style="grid-column:1/-1">${emptyHtml("Everything is settled", "This page stays empty until you or a friend owes money.", "✓")}</div>`;
+        return;
+      }
+      grid.innerHTML = open.map(([friendId, amount]) => {
+        const friend = userById(friendId);
+        return `<div class="card friend-card"><div class="friend-top"><div class="avatar">${initials(friend.displayName)}</div><div><strong>${escapeHtml(friend.displayName)}</strong><div style="color:var(--muted);font-size:.82rem;margin-top:3px">${escapeHtml(friend.email || "Group member")}</div></div></div><div class="friend-balance ${amount > 0 ? "positive" : "negative"}">${amount > 0 ? `${friend.displayName} owes you` : `You owe ${friend.displayName}`} ${money(Math.abs(amount))}</div><div class="friend-actions"><button class="btn btn-primary" data-settle-friend="${friendId}" data-balance="${amount}">Settle up</button></div></div>`;
+      }).join("");
+    }
+
+    function renderSettlements() {
+      const settlements = visibleSettlements().sort((a, b) => String(b.date).localeCompare(String(a.date)));
+      $("#settlementList").innerHTML = settlements.length ? settlements.map(settlement => {
+        const from = userById(settlement.fromUserId);
+        const to = userById(settlement.toUserId);
+        return `<div class="list-item"><div class="avatar">✓</div><div class="list-main"><strong>${escapeHtml(from.displayName)} paid ${escapeHtml(to.displayName)}</strong><span>${escapeHtml(formatDate(settlement.date))}${settlement.note ? ` · ${escapeHtml(settlement.note)}` : ""}</span></div><div class="list-amount positive">${money(settlement.amount)}</div></div>`;
+      }).join("") : emptyHtml("No payments recorded", "Settlements will appear here.", "✓");
+    }
+
+    function renderAdmin() {
+      if (!currentIsAdmin()) return;
+      $("#adminUserCount").textContent = state.users.filter(user => user.active !== false && user.role !== "admin").length;
+      $("#adminExpenseCount").textContent = state.expenses.length;
+      $("#adminSpendTotal").textContent = money(state.expenses.reduce((sum, expense) => sum + Number(expense.total || 0), 0));
+      $("#adminSettlementCount").textContent = state.settlements.length;
+      $("#adminUserRows").innerHTML = state.users.map(user => `<tr><td><strong>${escapeHtml(user.displayName)}</strong></td><td>${escapeHtml(user.email)}</td><td><span class="badge ${user.role === "admin" ? "badge-admin" : ""}">${escapeHtml(user.role)}</span></td><td><span class="badge ${user.active === false ? "badge-warning" : "badge-success"}">${user.active === false ? "Disabled" : "Active"}</span></td></tr>`).join("");
+
+      const pairs = calculateAllPairBalances();
+      $("#adminBalanceList").innerHTML = pairs.length ? pairs.map(pair => {
+        const a = userById(pair.a);
+        const b = userById(pair.b);
+        const debtor = pair.netAowesB > 0 ? a : b;
+        const creditor = pair.netAowesB > 0 ? b : a;
+        return `<div class="list-item"><div class="list-main"><strong>${escapeHtml(debtor.displayName)} owes ${escapeHtml(creditor.displayName)}</strong><span>Net pair balance</span></div><div class="list-amount negative">${money(Math.abs(pair.netAowesB))}</div></div>`;
+      }).join("") : emptyHtml("Group is settled", "There are no open pair balances.", "✓");
+    }
+
+    function renderPayerOptions() {
+      const selected = document.querySelector('input[name="payer"]:checked')?.value || state.currentUser.id;
+      const members = state.users.filter(user => user.active !== false && user.role !== "admin");
+      $("#payerGrid").innerHTML = members.map(user => `<label class="select-chip"><input type="radio" name="payer" value="${user.id}" ${user.id === selected ? "checked" : ""}><span><b>${initials(user.displayName)}</b>${escapeHtml(user.displayName)}</span></label>`).join("");
+    }
+
+    function renderSettlementOptions() {
+      const members = state.users.filter(user => user.active !== false && user.role !== "admin");
+      const options = members.map(user => `<option value="${user.id}">${escapeHtml(user.displayName)}</option>`).join("");
+      $("#settlementFrom").innerHTML = options;
+      $("#settlementTo").innerHTML = options;
+      $("#settlementFrom").value = state.currentUser.id;
+      const another = members.find(user => user.id !== state.currentUser.id);
+      if (another) $("#settlementTo").value = another.id;
+    }
+
+    function initializeDraft(items = null) {
+      const normalizeItem = item => {
+        const assignedTo = [...(item.assignedTo || [state.currentUser?.id].filter(Boolean))];
+        const portions = { ...(item.portions || item.weights || {}) };
+        assignedTo.forEach(userId => {
+          const value = Number(portions[userId]);
+          portions[userId] = Number.isFinite(value) && value > 0 ? value : 1;
+        });
+        return {
+          id: makeId(),
+          name: item.name || "",
+          quantity: Number(item.quantity || 1),
+          price: Number(item.price || 0),
+          taxable: Boolean(item.taxable ?? item.hasTax ?? item.isTaxable ?? false),
+          assignedTo,
+          splitMode: item.splitMode === "custom" ? "custom" : "equal",
+          portions
+        };
+      };
+
+      state.itemDrafts = items?.length
+        ? items.map(normalizeItem)
+        : [normalizeItem({ name: "", quantity: 1, price: 0, taxable: false })];
+      $("#expenseDate").value = today();
+      $("#expenseTip").value = "0";
+      renderItemRows();
+    }
+
+    function renderItemRows() {
+      const members = state.users.filter(user => user.active !== false && user.role !== "admin");
+      $("#itemRows").innerHTML = state.itemDrafts.map(item => {
+        const portionFields = item.assignedTo.map(userId => {
+          const user = userById(userId);
+          const portion = Number(item.portions?.[userId] || 1);
+          return `<label class="portion-field"><span title="${escapeHtml(user.displayName)}">${escapeHtml(user.displayName)}</span><input class="portion-input" data-user-id="${escapeHtml(userId)}" type="number" min="0.01" step="0.01" value="${portion}" aria-label="Portions for ${escapeHtml(user.displayName)}"></label>`;
+        }).join("");
+
+        const mainRow = `<tr class="item-main-row" data-item-id="${item.id}"><td><input class="item-name" value="${escapeHtml(item.name)}" placeholder="Item name" required></td><td><input class="item-quantity" type="number" min="0.01" step="0.01" value="${item.quantity}"></td><td><input class="item-price" type="number" min="0" step="0.01" value="${item.price}"></td><td><label class="item-tax-toggle" title="Apply 13% HST to this item only"><input class="item-taxable" type="checkbox" ${item.taxable ? "checked" : ""}><span class="item-tax-box">✓</span><b>13%</b></label></td><td><div class="item-people">${members.map(user => `<label class="mini-person" title="${escapeHtml(user.displayName)}"><input class="item-assignee" type="checkbox" value="${user.id}" ${item.assignedTo.includes(user.id) ? "checked" : ""}><span>${initials(user.displayName)}</span></label>`).join("")}</div></td><td><select class="item-split-mode" aria-label="Split method"><option value="equal" ${item.splitMode === "equal" ? "selected" : ""}>Equal split</option><option value="custom" ${item.splitMode === "custom" ? "selected" : ""}>Custom portions</option></select></td><td><button class="icon-btn btn-danger remove-item" type="button" title="Remove item">✕</button></td></tr>`;
+
+        const portionRow = item.splitMode === "custom" ? `<tr class="portion-row" data-portion-for="${item.id}"><td colspan="7"><div class="portion-panel"><div class="portion-panel-header"><span><strong>Custom portions</strong> · Enter relative amounts such as 2, 0.5, 1 and 1.</span><span>HST follows the same portions.</span></div><div class="portion-editor">${portionFields || '<span style="color:var(--muted);font-size:.8rem">Select at least one person above.</span>'}</div></div></td></tr>` : "";
+        return mainRow + portionRow;
+      }).join("");
+      updateDraftTotals();
+    }
+
+    function syncDraftFromRows() {
+      $$("#itemRows .item-main-row").forEach(row => {
+        const item = state.itemDrafts.find(entry => entry.id === row.dataset.itemId);
+        if (!item) return;
+        item.name = row.querySelector(".item-name").value.trim();
+        item.quantity = Number(row.querySelector(".item-quantity").value || 1);
+        item.price = Number(row.querySelector(".item-price").value || 0);
+        item.taxable = row.querySelector(".item-taxable").checked;
+        item.assignedTo = [...row.querySelectorAll(".item-assignee:checked")].map(input => input.value);
+        item.splitMode = row.querySelector(".item-split-mode").value === "custom" ? "custom" : "equal";
+        item.portions = { ...(item.portions || {}) };
+        item.assignedTo.forEach(userId => {
+          const existing = Number(item.portions[userId]);
+          if (!Number.isFinite(existing) || existing <= 0) item.portions[userId] = 1;
+        });
+        const portionRow = row.nextElementSibling?.classList.contains("portion-row") ? row.nextElementSibling : null;
+        portionRow?.querySelectorAll(".portion-input").forEach(input => {
+          item.portions[input.dataset.userId] = Number(input.value || 0);
+        });
+      });
+    }
+
+    function itemWeights(item) {
+      if (item.splitMode !== "custom") {
+        return item.assignedTo.map(userId => ({ userId, weight: 1 }));
+      }
+      return item.assignedTo
+        .map(userId => ({ userId, weight: Number(item.portions?.[userId] || 0) }))
+        .filter(entry => Number.isFinite(entry.weight) && entry.weight > 0);
+    }
+
+    function calculateDraft() {
+      syncDraftFromRows();
+      const itemSubtotal = roundMoney(state.itemDrafts.reduce((sum, item) => sum + Number(item.price || 0), 0));
+      const tax = roundMoney(state.itemDrafts.reduce((sum, item) => {
+        return sum + (item.taxable ? roundMoney(Number(item.price || 0) * HST_RATE) : 0);
+      }, 0));
+      const tip = roundMoney(Number($("#expenseTip").value || 0));
+      const allocations = {};
+      const baseAllocations = {};
+      let allocatedSubtotal = 0;
+      let allocatedTax = 0;
+
+      state.itemDrafts.forEach(item => {
+        const itemPrice = Number(item.price || 0);
+        const weights = itemWeights(item);
+        const totalWeight = weights.reduce((sum, entry) => sum + entry.weight, 0);
+        if (!weights.length || totalWeight <= 0 || itemPrice <= 0) return;
+        const itemTax = item.taxable ? roundMoney(itemPrice * HST_RATE) : 0;
+        allocatedSubtotal += itemPrice;
+        allocatedTax += itemTax;
+        weights.forEach(({ userId, weight }) => {
+          const ratio = weight / totalWeight;
+          const baseShare = itemPrice * ratio;
+          const taxShare = itemTax * ratio;
+          baseAllocations[userId] = (baseAllocations[userId] || 0) + baseShare;
+          allocations[userId] = (allocations[userId] || 0) + baseShare + taxShare;
+        });
+      });
+
+      if (allocatedSubtotal > 0 && tip > 0) {
+        Object.keys(allocations).forEach(userId => {
+          allocations[userId] += tip * (baseAllocations[userId] / allocatedSubtotal);
+        });
+      }
+
+      const expectedAllocatedTotal = roundMoney(allocatedSubtotal + allocatedTax + (allocatedSubtotal > 0 ? tip : 0));
+      const rounded = distributeRounding(allocations, expectedAllocatedTotal);
+      return { subtotal: itemSubtotal, tax, tip, total: roundMoney(itemSubtotal + tax + tip), splits: rounded };
+    }
+
+    function distributeRounding(rawAllocations, expectedTotal) {
+      const ids = Object.keys(rawAllocations);
+      if (!ids.length) return {};
+      const rounded = Object.fromEntries(ids.map(id => [id, roundMoney(rawAllocations[id])]));
+      let differenceCents = Math.round((expectedTotal - Object.values(rounded).reduce((sum, value) => sum + value, 0)) * 100);
+      let index = 0;
+      while (differenceCents !== 0 && index < 10000) {
+        const id = ids[index % ids.length];
+        rounded[id] = roundMoney(rounded[id] + (differenceCents > 0 ? 0.01 : -0.01));
+        differenceCents += differenceCents > 0 ? -1 : 1;
+        index += 1;
+      }
+      return rounded;
+    }
+
+    function updateDraftTotals() {
+      if (!state.currentUser || !$("#itemRows")) return;
+      const calculation = calculateDraft();
+      $("#subtotalValue").textContent = money(calculation.subtotal);
+      $("#taxValue").textContent = money(calculation.tax);
+      $("#tipValue").textContent = money(calculation.tip);
+      $("#grandTotalValue").textContent = money(calculation.total);
+      const bulkTax = $("#applyHstAll");
+      if (bulkTax) {
+        const taxableCount = state.itemDrafts.filter(item => item.taxable).length;
+        bulkTax.checked = state.itemDrafts.length > 0 && taxableCount === state.itemDrafts.length;
+        bulkTax.indeterminate = taxableCount > 0 && taxableCount < state.itemDrafts.length;
+      }
+      const entries = Object.entries(calculation.splits);
+      $("#splitPreview").innerHTML = entries.length ? entries.map(([userId, amount]) => `<div class="split-row"><span>${escapeHtml(userById(userId).displayName)}</span><strong>${money(amount)}</strong></div>`).join("") : `<div class="empty-state" style="padding:22px"><strong>No shares yet</strong><span>Add an item and choose who shared it.</span></div>`;
+    }
+
+    async function saveExpense(event) {
+      event.preventDefault();
+      const button = $("#saveExpenseBtn");
+      syncDraftFromRows();
+      const calculation = calculateDraft();
+      const payer = document.querySelector('input[name="payer"]:checked')?.value;
+      const invalidItem = state.itemDrafts.find(item => !item.name || Number(item.price) <= 0 || !item.assignedTo.length);
+      if (invalidItem) return toast("Every item needs a name, price, and at least one person.", "error");
+      const invalidCustomSplit = state.itemDrafts.find(item => item.splitMode === "custom" && item.assignedTo.some(userId => Number(item.portions?.[userId] || 0) <= 0));
+      if (invalidCustomSplit) return toast("Every selected person needs a custom portion greater than 0.", "error");
+      if (!payer) return toast("Choose who paid.", "error");
+      if (!Object.keys(calculation.splits).length) return toast("Assign at least one item.", "error");
+
+      const participantIds = [...new Set([payer, ...Object.keys(calculation.splits)])];
+      const expense = {
+        title: $("#expenseTitle").value.trim(),
+        date: $("#expenseDate").value,
+        paidBy: payer,
+        participantIds,
+        items: state.itemDrafts.map(({ id, ...item }) => item),
+        ...calculation,
+        createdBy: state.currentUser.id,
+        createdAt: new Date().toISOString()
+      };
+
+      try {
+        setLoading(button, true, "Saving…");
+        if (!firebaseEnabled || !db) throw new Error("Firebase is not connected.");
+        await firebaseApi.addDoc(
+          firebaseApi.collection(db, "expenses"),
+          { ...expense, createdAt: firebaseApi.serverTimestamp() }
+        );
+        toast("Expense saved.", "success");
+        $("#expenseTitle").value = "";
+        state.scannedReceipt = null;
+        initializeDraft();
+        navigate("expenses");
+      } catch (error) {
+        console.error(error);
+        toast(`Could not save expense: ${error.message}`, "error");
+      } finally {
+        setLoading(button, false);
+      }
+    }
+
+    async function saveSettlement(event) {
+      event.preventDefault();
+      const fromUserId = $("#settlementFrom").value;
+      const toUserId = $("#settlementTo").value;
+      if (fromUserId === toUserId) return toast("Payer and recipient must be different.", "error");
+      if (!currentIsAdmin() && fromUserId !== state.currentUser.id && toUserId !== state.currentUser.id) return toast("You can only record a payment involving you.", "error");
+
+      const settlement = {
+        fromUserId,
+        toUserId,
+        amount: roundMoney($("#settlementAmount").value),
+        date: $("#settlementDate").value,
+        note: $("#settlementNote").value.trim(),
+        participantIds: [fromUserId, toUserId],
+        createdBy: state.currentUser.id,
+        createdAt: new Date().toISOString()
+      };
+      try {
+        if (!firebaseEnabled || !db) throw new Error("Firebase is not connected.");
+        await firebaseApi.addDoc(
+          firebaseApi.collection(db, "settlements"),
+          { ...settlement, createdAt: firebaseApi.serverTimestamp() }
+        );
+        closeModal("settlementModal");
+        toast("Settlement recorded.", "success");
+      } catch (error) {
+        toast(`Could not record settlement: ${error.message}`, "error");
+      }
+    }
+
+    function openSettlement(friendId = null, balance = null) {
+      renderSettlementOptions();
+      $("#settlementDate").value = today();
+      $("#settlementAmount").value = balance == null ? "" : Math.abs(Number(balance)).toFixed(2);
+      $("#settlementNote").value = "";
+      if (friendId && balance != null) {
+        if (Number(balance) < 0) {
+          $("#settlementFrom").value = state.currentUser.id;
+          $("#settlementTo").value = friendId;
+        } else {
+          $("#settlementFrom").value = friendId;
+          $("#settlementTo").value = state.currentUser.id;
+        }
+      }
+      $("#settlementModal").classList.remove("hidden");
+    }
+
+    function closeModal(id) { $(`#${id}`).classList.add("hidden"); }
+
+    function itemAssignmentLabel(item) {
+      return (item.assignedTo || []).map(userId => {
+        const name = userById(userId).displayName;
+        if (item.splitMode !== "custom") return escapeHtml(name);
+        const portion = Number(item.portions?.[userId] || 0);
+        return `${escapeHtml(name)} ×${portion}`;
+      }).join(", ");
+    }
+
+    function showExpenseDetails(expenseId) {
+      const expense = state.expenses.find(entry => entry.id === expenseId);
+      if (!expense) return;
+      const payer = userById(expense.paidBy);
+      $("#expenseModalTitle").textContent = expense.title;
+      $("#expenseModalBody").innerHTML = `
+        <div style="display:flex;justify-content:space-between;gap:18px;margin-bottom:18px"><div><div style="color:var(--muted);font-size:.8rem">Paid by</div><strong>${escapeHtml(payer.displayName)}</strong></div><div style="text-align:right"><div style="color:var(--muted);font-size:.8rem">Total</div><strong style="font-size:1.35rem">${money(expense.total)}</strong></div></div>
+        <div class="split-preview" style="margin-bottom:18px"><div class="split-row"><span>Date</span><strong>${escapeHtml(formatDate(expense.date))}</strong></div><div class="split-row"><span>Subtotal</span><strong>${money(expense.subtotal)}</strong></div><div class="split-row"><span>Tax</span><strong>${money(expense.tax)}</strong></div><div class="split-row"><span>Tip</span><strong>${money(expense.tip)}</strong></div></div>
+        <h4>Items</h4>
+        <div class="split-preview">${(expense.items || []).map(item => `<div class="split-row"><div><strong>${escapeHtml(item.name)}</strong>${item.taxable ? ` <span class="tax-rate-badge">13% HST</span>` : ""}${item.splitMode === "custom" ? ` <span class="tax-rate-badge">Custom portions</span>` : ""}<div style="color:var(--muted);font-size:.76rem;margin-top:3px">${itemAssignmentLabel(item)}</div></div><strong>${money(item.price)}</strong></div>`).join("")}</div>
+        <h4>Shares</h4>
+        <div class="split-preview">${Object.entries(expense.splits || {}).map(([id, amount]) => `<div class="split-row"><span>${escapeHtml(userById(id).displayName)}</span><strong>${money(amount)}</strong></div>`).join("")}</div>`;
+      $("#expenseModal").classList.remove("hidden");
+    }
+
+    function navigate(pageName) {
+      if (pageName === "admin" && !currentIsAdmin()) pageName = "dashboard";
+      state.activePage = pageName;
+      $$(".page").forEach(page => page.classList.toggle("active", page.id === `page-${pageName}`));
+      $$(".nav-btn").forEach(button => button.classList.toggle("active", button.dataset.page === pageName));
+      const pageTitles = {
+        dashboard: ["Dashboard", "Your group expense overview"], expenses: ["Expenses", "Transactions and receipt details"],
+        "add-expense": ["Add expense", "Create an item-level split"], receipt: ["Scan receipt", "Extract details with Gemini"],
+        friends: ["Friends", "Open balances only"], settlements: ["Settlements", "Recorded payments"], admin: ["Admin", "Complete group visibility"]
+      };
+      const [title, subtitle] = pageTitles[pageName] || pageTitles.dashboard;
+      $("#topbarTitle").textContent = title;
+      $("#topbarSubtitle").textContent = subtitle;
+      closeSidebar();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function openSidebar() { $("#sidebar").classList.add("open"); $("#sidebarOverlay").classList.add("show"); }
+    function closeSidebar() { $("#sidebar").classList.remove("open"); $("#sidebarOverlay").classList.remove("show"); }
+
+    async function scanReceipt() {
+      const file = $("#receiptFile").files[0];
+      if (!file) return toast("Choose a receipt image first.", "error");
+      if (!firebaseEnabled) return toast("Connect BillBuddy to Firebase and deploy the scanReceipt function before using receipt scanning.", "error");
+      $("#scanIdle").classList.add("hidden");
+      $("#scanProgress").classList.remove("hidden");
+      try {
+        const imageBase64 = await fileToBase64(file);
+        const callable = firebaseApi.httpsCallable(functions, "scanReceipt");
+        const response = await callable({ imageBase64, mimeType: file.type || "image/jpeg" });
+        displayScannedReceipt(response.data);
+      } catch (error) {
+        console.error(error);
+        toast(`Receipt scan failed: ${error.message}`, "error");
+        $("#scanIdle").classList.remove("hidden");
+        $("#scanProgress").classList.add("hidden");
+      }
+    }
+    function displayScannedReceipt(data) {
+      state.scannedReceipt = {
+        merchant: data.merchant || "Receipt expense",
+        date: normalizeDate(data.date) || today(),
+        items: Array.isArray(data.items) ? data.items.map(item => ({ name: item.name || "Item", quantity: Number(item.quantity || 1), price: Number(item.price || item.totalPrice || 0), taxable: Boolean(item.taxable ?? item.hasTax ?? item.isTaxable ?? false) })) : [],
+        subtotal: Number(data.subtotal || 0), tax: Number(data.tax || 0), tip: Number(data.tip || 0), total: Number(data.total || 0)
+      };
+      $("#scanMerchant").value = state.scannedReceipt.merchant;
+      $("#scanDate").value = state.scannedReceipt.date;
+      $("#scanSummary").innerHTML = `<div class="split-row"><span>Items found</span><strong>${state.scannedReceipt.items.length}</strong></div><div class="split-row"><span>Subtotal</span><strong>${money(state.scannedReceipt.subtotal)}</strong></div><div class="split-row"><span>Tax</span><strong>${money(state.scannedReceipt.tax)}</strong></div><div class="split-row"><span>Tip</span><strong>${money(state.scannedReceipt.tip)}</strong></div><div class="split-row"><span>Total</span><strong>${money(state.scannedReceipt.total)}</strong></div>`;
+      $("#scanIdle").classList.add("hidden");
+      $("#scanProgress").classList.add("hidden");
+      $("#scanResult").classList.remove("hidden");
+    }
+
+    function useScannedReceipt() {
+      if (!state.scannedReceipt) return;
+      state.scannedReceipt.merchant = $("#scanMerchant").value.trim() || "Receipt expense";
+      state.scannedReceipt.date = $("#scanDate").value || today();
+      $("#expenseTitle").value = state.scannedReceipt.merchant;
+      initializeDraft(state.scannedReceipt.items.map(item => ({ ...item, assignedTo: [state.currentUser.id] })));
+      $("#expenseDate").value = state.scannedReceipt.date;
+      $("#expenseTip").value = state.scannedReceipt.tip.toFixed(2);
+      updateDraftTotals();
+      navigate("add-expense");
+      toast("Receipt items loaded. Review HST, assignments, and choose custom portions only where needed.", "success");
+    }
+
+    function fileToBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(String(reader.result).split(",")[1]);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function normalizeDate(value) {
+      if (!value) return "";
+      const match = String(value).match(/(\d{4})[-\/]?(\d{1,2})[-\/]?(\d{1,2})/);
+      if (match) return `${match[1]}-${match[2].padStart(2, "0")}-${match[3].padStart(2, "0")}`;
+      const parsed = new Date(value);
+      return Number.isNaN(parsed.getTime()) ? "" : parsed.toISOString().slice(0, 10);
+    }
+
+    function formatDate(value) {
+      if (!value) return "Unknown date";
+      const parsed = new Date(`${value}T12:00:00`);
+      return Number.isNaN(parsed.getTime()) ? value : parsed.toLocaleDateString(LOCALE, { year: "numeric", month: "short", day: "numeric" });
+    }
+
+    function emptyHtml(title, copy, icon) {
+      return `<div class="empty-state"><div class="empty-icon">${icon}</div><strong>${escapeHtml(title)}</strong><span>${escapeHtml(copy)}</span></div>`;
+    }
+
+    function bindEvents() {
+      $("#loginForm").addEventListener("submit", async event => {
+        event.preventDefault();
+        $("#loginError").textContent = "";
+        if (!firebaseEnabled) {
+          $("#loginError").textContent = "Firebase has not been configured yet.";
+          return;
+        }
+        const button = event.submitter;
+        try {
+          setLoading(button, true, "Signing in…");
+          await firebaseApi.signInWithEmailAndPassword(auth, $("#loginEmail").value.trim(), $("#loginPassword").value);
+        } catch (error) {
+          $("#loginError").textContent = "Sign-in failed. Check the email and password.";
+          console.error(error);
+        } finally { setLoading(button, false); }
+      });
+      $("#logoutBtn").addEventListener("click", async () => { if (auth) await firebaseApi.signOut(auth); });
+      $("#quickAddBtn").addEventListener("click", () => navigate("add-expense"));
+      $("#mobileMenuBtn").addEventListener("click", openSidebar);
+      $("#sidebarOverlay").addEventListener("click", closeSidebar);
+      $$(".nav-btn").forEach(button => button.addEventListener("click", () => navigate(button.dataset.page)));
+      $$('[data-go]').forEach(button => button.addEventListener("click", () => navigate(button.dataset.go)));
+
+      $("#addItemBtn").addEventListener("click", () => {
+        syncDraftFromRows();
+        state.itemDrafts.push({ id: makeId(), name: "", quantity: 1, price: 0, taxable: false, assignedTo: [state.currentUser.id], splitMode: "equal", portions: { [state.currentUser.id]: 1 } });
+        renderItemRows();
+      });
+
+      $("#itemRows").addEventListener("input", event => {
+        if (!event.target.matches(".item-assignee, .item-split-mode")) updateDraftTotals();
+      });
+      $("#itemRows").addEventListener("change", event => {
+        if (event.target.matches(".item-assignee, .item-split-mode")) {
+          syncDraftFromRows();
+          renderItemRows();
+          return;
+        }
+        updateDraftTotals();
+      });
+      $("#applyHstAll").addEventListener("change", event => {
+        syncDraftFromRows();
+        const applyToAll = event.target.checked;
+        state.itemDrafts.forEach(item => { item.taxable = applyToAll; });
+        renderItemRows();
+      });
+      $("#itemRows").addEventListener("click", event => {
+        const button = event.target.closest(".remove-item");
+        if (!button) return;
+        const row = button.closest("tr");
+        if (state.itemDrafts.length === 1) return toast("An expense needs at least one item.", "error");
+        state.itemDrafts = state.itemDrafts.filter(item => item.id !== row.dataset.itemId);
+        renderItemRows();
+      });
+
+      $("#expenseTip").addEventListener("input", updateDraftTotals);
+      $("#expenseForm").addEventListener("submit", saveExpense);
+      $("#expenseSearch").addEventListener("input", renderExpenses);
+      $("#expenseMonth").addEventListener("change", renderExpenses);
+      $("#expensePayer").addEventListener("change", renderExpenses);
+
+      document.addEventListener("click", event => {
+        const expenseButton = event.target.closest("[data-expense-id]");
+        if (expenseButton) showExpenseDetails(expenseButton.dataset.expenseId);
+        const settleButton = event.target.closest("[data-settle-friend]");
+        if (settleButton) openSettlement(settleButton.dataset.settleFriend, Number(settleButton.dataset.balance));
+        const closeButton = event.target.closest("[data-close-modal]");
+        if (closeButton) closeModal(closeButton.dataset.closeModal);
+      });
+
+      $("#settleAnyBtn").addEventListener("click", () => openSettlement());
+      $("#newSettlementBtn").addEventListener("click", () => openSettlement());
+      $("#settlementForm").addEventListener("submit", saveSettlement);
+
+      $("#receiptFile").addEventListener("change", event => {
+        const file = event.target.files[0];
+        if (!file) return;
+        const preview = $("#receiptPreview");
+        preview.src = URL.createObjectURL(file);
+        preview.classList.remove("hidden");
+        $("#scanReceiptBtn").disabled = false;
+        $("#scanIdle").classList.remove("hidden");
+        $("#scanProgress").classList.add("hidden");
+        $("#scanResult").classList.add("hidden");
+      });
+      $("#scanReceiptBtn").addEventListener("click", scanReceipt);
+      $("#useScanBtn").addEventListener("click", useScannedReceipt);
+
+      const uploadZone = $("#uploadZone");
+      ["dragenter", "dragover"].forEach(type => uploadZone.addEventListener(type, event => { event.preventDefault(); uploadZone.classList.add("dragging"); }));
+      ["dragleave", "drop"].forEach(type => uploadZone.addEventListener(type, event => { event.preventDefault(); uploadZone.classList.remove("dragging"); }));
+      uploadZone.addEventListener("drop", event => {
+        const file = event.dataTransfer.files[0];
+        if (!file) return;
+        const transfer = new DataTransfer();
+        transfer.items.add(file);
+        $("#receiptFile").files = transfer.files;
+        $("#receiptFile").dispatchEvent(new Event("change"));
+      });
+    }
+
+    async function boot() {
+      $("#expenseDate").value = today();
+      $("#settlementDate").value = today();
+      bindEvents();
+      await initializeFirebase();
+    }
+
+    boot();
+  </script>
+</body>
+</html>
