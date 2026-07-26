@@ -1080,9 +1080,9 @@
               </label>
               <img id="receiptPreview" class="receipt-preview hidden" alt="Receipt preview" />
             </div></div>
-            <div class="card"><div class="card-header"><div><h3>Receipt scanner</h3><p>Your Gemini key stays inside a Firebase Cloud Function.</p></div></div><div class="card-body">
+            <div class="card"><div class="card-header"><div><h3>Receipt scanner</h3><p>Protected by Firebase App Check and powered by Gemini.</p></div></div><div class="card-body">
               <div id="scanIdle">
-                <div class="privacy-note">The browser sends the selected image to the callable function <strong>scanReceipt</strong>. Do not place a Gemini API key inside this HTML file.</div>
+                <div class="privacy-note">The selected image is sent through <strong>Firebase AI Logic</strong> to Gemini for extraction. No Gemini API key is stored in this HTML file. Always review the extracted items, prices, and HST selections before saving.</div>
                 <button id="scanReceiptBtn" class="btn btn-primary btn-block" style="margin-top:16px" disabled>Scan with Gemini</button>
               </div>
               <div id="scanProgress" class="hidden empty-state"><div class="empty-icon">⌛</div><strong>Reading your receipt</strong><span>Extracting line items and totals…</span></div>
@@ -1154,7 +1154,7 @@
   <div id="toastContainer" class="toast-container"></div>
 
   <script type="module">
-    // BillBuddy production app — Firebase Authentication + Cloud Firestore + GitHub Pages
+    // BillBuddy production app — Firebase Auth, Firestore, App Check, AI Logic + GitHub Pages
     // Replace this object with your Firebase Web App configuration.
     const firebaseConfig = {
       apiKey: "AIzaSyBwnHbjIivgqDxqEMK_6pScDzIoqPt8vVI",
@@ -1169,11 +1169,16 @@
     const LOCALE = "en-CA";
     const HST_RATE = 0.13;
     const FIREBASE_VERSION = "12.16.0";
+    const RECAPTCHA_ENTERPRISE_SITE_KEY = "6LfAZGYtAAAAACf2S87iiXau8yZC658ZKjpVYvA1";
+    const RECEIPT_MODEL = "gemini-3.6-flash";
+    const MAX_RECEIPT_FILE_BYTES = 15 * 1024 * 1024;
 
     let firebaseEnabled = Boolean(firebaseConfig.apiKey && firebaseConfig.projectId);
     let auth = null;
     let db = null;
-    let functions = null;
+    let appCheck = null;
+    let ai = null;
+    let receiptModel = null;
     let firebaseApi = {};
     let unsubscribeExpenses = null;
     let unsubscribeSettlements = null;
@@ -1247,18 +1252,83 @@
       }
 
       try {
-        const [appMod, authMod, firestoreMod, functionsMod] = await Promise.all([
+        const [appMod, authMod, firestoreMod, appCheckMod, aiMod] = await Promise.all([
           import(`https://www.gstatic.com/firebasejs/${FIREBASE_VERSION}/firebase-app.js`),
           import(`https://www.gstatic.com/firebasejs/${FIREBASE_VERSION}/firebase-auth.js`),
           import(`https://www.gstatic.com/firebasejs/${FIREBASE_VERSION}/firebase-firestore.js`),
-          import(`https://www.gstatic.com/firebasejs/${FIREBASE_VERSION}/firebase-functions.js`)
+          import(`https://www.gstatic.com/firebasejs/${FIREBASE_VERSION}/firebase-app-check.js`),
+          import(`https://www.gstatic.com/firebasejs/${FIREBASE_VERSION}/firebase-ai.js`)
         ]);
 
         const app = appMod.initializeApp(firebaseConfig);
+
+        // App Check must be initialized before Firebase services make protected requests.
+        appCheck = appCheckMod.initializeAppCheck(app, {
+          provider: new appCheckMod.ReCaptchaEnterpriseProvider(
+            RECAPTCHA_ENTERPRISE_SITE_KEY
+          ),
+          isTokenAutoRefreshEnabled: true
+        });
+
         auth = authMod.getAuth(app);
         db = firestoreMod.getFirestore(app);
-        functions = functionsMod.getFunctions(app);
-        firebaseApi = { ...authMod, ...firestoreMod, ...functionsMod };
+
+        ai = aiMod.getAI(app, {
+          backend: new aiMod.GoogleAIBackend()
+        });
+
+        const receiptSchema = aiMod.Schema.object({
+          properties: {
+            merchant: aiMod.Schema.string({
+              description: "Merchant or store name."
+            }),
+            date: aiMod.Schema.string({
+              description: "Receipt date in YYYY-MM-DD format when visible."
+            }),
+            items: aiMod.Schema.array({
+              items: aiMod.Schema.object({
+                properties: {
+                  name: aiMod.Schema.string({
+                    description: "Readable receipt line-item name."
+                  }),
+                  quantity: aiMod.Schema.number({
+                    description: "Quantity purchased. Use 1 when not shown."
+                  }),
+                  price: aiMod.Schema.number({
+                    description: "Total pre-tax price for this receipt line."
+                  }),
+                  taxable: aiMod.Schema.boolean({
+                    description: "True only when the item is subject to 13% HST; false for tax-exempt items or when uncertain."
+                  })
+                }
+              })
+            }),
+            subtotal: aiMod.Schema.number({
+              description: "Receipt subtotal before tax and tip."
+            }),
+            tax: aiMod.Schema.number({
+              description: "Total tax printed on the receipt."
+            }),
+            tip: aiMod.Schema.number({
+              description: "Tip or gratuity printed on the receipt, otherwise 0."
+            }),
+            total: aiMod.Schema.number({
+              description: "Final receipt total."
+            })
+          },
+          optionalProperties: ["date", "subtotal", "tax", "tip", "total"]
+        });
+
+        receiptModel = aiMod.getGenerativeModel(ai, {
+          model: RECEIPT_MODEL,
+          generationConfig: {
+            temperature: 0.1,
+            responseMimeType: "application/json",
+            responseSchema: receiptSchema
+          }
+        });
+
+        firebaseApi = { ...authMod, ...firestoreMod };
 
         $("#firebaseSetupNotice").classList.add("hidden");
         $("#loginForm button[type='submit']").disabled = false;
@@ -1876,17 +1946,62 @@
     async function scanReceipt() {
       const file = $("#receiptFile").files[0];
       if (!file) return toast("Choose a receipt image first.", "error");
-      if (!firebaseEnabled) return toast("Connect BillBuddy to Firebase and deploy the scanReceipt function before using receipt scanning.", "error");
+      if (!receiptModel) {
+        return toast("Gemini is not ready. Refresh BillBuddy and try again.", "error");
+      }
+      if (!file.type.startsWith("image/")) {
+        return toast("Please choose an image file.", "error");
+      }
+      if (file.size > MAX_RECEIPT_FILE_BYTES) {
+        return toast("The receipt image is too large. Use an image smaller than 15 MB.", "error");
+      }
+
       $("#scanIdle").classList.add("hidden");
       $("#scanProgress").classList.remove("hidden");
+      $("#scanResult").classList.add("hidden");
+
       try {
         const imageBase64 = await fileToBase64(file);
-        const callable = firebaseApi.httpsCallable(functions, "scanReceipt");
-        const response = await callable({ imageBase64, mimeType: file.type || "image/jpeg" });
-        displayScannedReceipt(response.data);
+        const imagePart = {
+          inlineData: {
+            data: imageBase64,
+            mimeType: file.type || "image/jpeg"
+          }
+        };
+
+        const prompt = `
+Read this Canadian receipt and extract its structured details.
+
+Rules:
+- Return every purchased line item separately.
+- "price" must be the full pre-tax price for that line after quantity or discounts.
+- Use quantity 1 when the receipt does not clearly show a quantity.
+- Set "taxable" to true only when the item is subject to 13% HST.
+- Basic groceries and other tax-exempt items should be false.
+- When tax status cannot be determined confidently, use false so the user can review it.
+- Do not include subtotal, tax, total, payment, change, discount-summary, loyalty, deposit-total, or tender lines as purchased items.
+- Use 0 for missing tax, tip, subtotal, or total.
+- Use YYYY-MM-DD for the date when it can be read.
+`;
+
+        const result = await receiptModel.generateContent([prompt, imagePart]);
+        const responseText = result.response.text();
+        const receiptData = JSON.parse(responseText);
+
+        if (!Array.isArray(receiptData.items) || receiptData.items.length === 0) {
+          throw new Error("Gemini could not find any receipt items.");
+        }
+
+        displayScannedReceipt(receiptData);
       } catch (error) {
         console.error(error);
-        toast(`Receipt scan failed: ${error.message}`, "error");
+        const message = String(error?.message || error);
+        const friendlyMessage = message.includes("App Check")
+          ? "App Check rejected the request. Confirm the GitHub domain and refresh the page."
+          : message.includes("JSON")
+            ? "Gemini returned an unreadable result. Try a clearer receipt photo."
+            : message;
+        toast(`Receipt scan failed: ${friendlyMessage}`, "error");
         $("#scanIdle").classList.remove("hidden");
         $("#scanProgress").classList.add("hidden");
       }
@@ -1922,8 +2037,14 @@
     function fileToBase64(file) {
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
-        reader.onload = () => resolve(String(reader.result).split(",")[1]);
-        reader.onerror = reject;
+        reader.onload = () => {
+          const encoded = String(reader.result || "").split(",")[1];
+          if (!encoded) reject(new Error("The receipt image could not be read."));
+          else resolve(encoded);
+        };
+        reader.onerror = () => reject(
+          reader.error || new Error("The receipt image could not be read.")
+        );
         reader.readAsDataURL(file);
       });
     }
