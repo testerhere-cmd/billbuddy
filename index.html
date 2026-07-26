@@ -1144,7 +1144,10 @@
     <div class="modal">
       <div class="modal-header"><h3 id="expenseModalTitle">Expense details</h3><button class="icon-btn" data-close-modal="expenseModal">✕</button></div>
       <div id="expenseModalBody" class="modal-body"></div>
-      <div class="modal-footer"><button class="btn btn-ghost" data-close-modal="expenseModal">Close</button></div>
+      <div class="modal-footer" style="justify-content:space-between">
+        <button id="deleteExpenseBtn" class="btn btn-danger hidden" type="button">Delete expense</button>
+        <button class="btn btn-ghost" data-close-modal="expenseModal">Close</button>
+      </div>
     </div>
   </div>
 
@@ -1182,6 +1185,7 @@
       settlements: [],
       itemDrafts: [],
       scannedReceipt: null,
+      selectedExpenseId: null,
       activePage: "dashboard"
     };
 
@@ -1759,7 +1763,10 @@
       $("#settlementModal").classList.remove("hidden");
     }
 
-    function closeModal(id) { $(`#${id}`).classList.add("hidden"); }
+    function closeModal(id) {
+      $(`#${id}`).classList.add("hidden");
+      if (id === "expenseModal") state.selectedExpenseId = null;
+    }
 
     function itemAssignmentLabel(item) {
       return (item.assignedTo || []).map(userId => {
@@ -1770,9 +1777,22 @@
       }).join(", ");
     }
 
+    function canDeleteExpense(expense) {
+      return Boolean(
+        expense
+        && (
+          currentIsAdmin()
+          || expense.createdBy === state.currentUser?.id
+        )
+      );
+    }
+
     function showExpenseDetails(expenseId) {
       const expense = state.expenses.find(entry => entry.id === expenseId);
       if (!expense) return;
+      state.selectedExpenseId = expenseId;
+      const deleteButton = $("#deleteExpenseBtn");
+      deleteButton.classList.toggle("hidden", !canDeleteExpense(expense));
       const payer = userById(expense.paidBy);
       $("#expenseModalTitle").textContent = expense.title;
       $("#expenseModalBody").innerHTML = `
@@ -1783,6 +1803,36 @@
         <h4>Shares</h4>
         <div class="split-preview">${Object.entries(expense.splits || {}).map(([id, amount]) => `<div class="split-row"><span>${escapeHtml(userById(id).displayName)}</span><strong>${money(amount)}</strong></div>`).join("")}</div>`;
       $("#expenseModal").classList.remove("hidden");
+    }
+
+    async function deleteSelectedExpense() {
+      const expense = state.expenses.find(
+        entry => entry.id === state.selectedExpenseId
+      );
+      if (!expense || !canDeleteExpense(expense)) {
+        return toast("You do not have permission to delete this expense.", "error");
+      }
+
+      const confirmed = window.confirm(
+        `Delete "${expense.title || "this expense"}"? This will remove it for everyone and recalculate all balances.`
+      );
+      if (!confirmed) return;
+
+      const button = $("#deleteExpenseBtn");
+      try {
+        setLoading(button, true, "Deleting…");
+        await firebaseApi.deleteDoc(
+          firebaseApi.doc(db, "expenses", expense.id)
+        );
+        state.selectedExpenseId = null;
+        closeModal("expenseModal");
+        toast("Expense deleted.");
+      } catch (error) {
+        console.error(error);
+        toast(`Could not delete expense: ${error.message}`, "error");
+      } finally {
+        setLoading(button, false);
+      }
     }
 
     function navigate(pageName) {
@@ -1948,6 +1998,8 @@
         const closeButton = event.target.closest("[data-close-modal]");
         if (closeButton) closeModal(closeButton.dataset.closeModal);
       });
+
+      $("#deleteExpenseBtn").addEventListener("click", deleteSelectedExpense);
 
       $("#settleAnyBtn").addEventListener("click", () => openSettlement());
       $("#newSettlementBtn").addEventListener("click", () => openSettlement());
