@@ -1195,7 +1195,25 @@
     const today = () => new Date().toISOString().slice(0, 10);
     const makeId = () => globalThis.crypto?.randomUUID?.() || `id-${Date.now()}-${Math.random().toString(16).slice(2)}`;
     const roundMoney = (value) => Math.round((Number(value) + Number.EPSILON) * 100) / 100;
-    const initials = (name = "User") => name.split(/\s+/).map(part => part[0]).join("").slice(0, 2).toUpperCase();
+    const MEMBER_INITIALS = {
+      Shaishta: "B",
+      Sid: "S",
+      Annie: "E",
+      Arooshay: "I",
+      Nirmal: "L",
+      Nesreen: "N"
+    };
+
+    const initials = (name = "User") => {
+      const cleanName = String(name).trim();
+      if (MEMBER_INITIALS[cleanName]) return MEMBER_INITIALS[cleanName];
+      return cleanName
+        .split(/\s+/)
+        .map(part => part[0])
+        .join("")
+        .slice(0, 2)
+        .toUpperCase();
+    };
     const userById = (id) => state.users.find(user => user.id === id) || { id, displayName: "Unknown member", email: "" };
     const currentIsAdmin = () => state.currentUser?.role === "admin";
     const escapeHtml = (value = "") => String(value).replace(/[&<>'"]/g, char => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", "'":"&#39;", '"':"&quot;" }[char]));
