@@ -1071,13 +1071,17 @@
           <div class="page-header"><div><h2>Scan receipt</h2><p>Gemini will extract the receipt. Review each item’s 13% HST checkbox before saving.</p></div></div>
           <div class="grid two-col">
             <div class="card"><div class="card-body">
-              <label id="uploadZone" class="upload-zone" for="receiptFile">
-                <input id="receiptFile" type="file" accept="image/*" capture="environment" />
+              <div id="uploadZone" class="upload-zone">
+                <input id="receiptGalleryFile" type="file" accept="image/*" />
+                <input id="receiptCameraFile" type="file" accept="image/*" capture="environment" />
                 <div style="font-size:2.5rem">▤</div>
-                <h3 style="margin:8px 0 5px">Upload or photograph a receipt</h3>
-                <p style="margin:0;color:var(--muted)">JPG, PNG or HEIC. Review all extracted values before saving.</p>
-                <span class="btn btn-secondary" style="margin-top:14px">Choose image</span>
-              </label>
+                <h3 style="margin:8px 0 5px">Add a receipt image</h3>
+                <p style="margin:0;color:var(--muted)">Choose an existing photo or take a new picture. Review all extracted values before saving.</p>
+                <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:14px">
+                  <label class="btn btn-secondary" for="receiptGalleryFile">Choose from gallery</label>
+                  <label class="btn btn-ghost" for="receiptCameraFile">Take photo</label>
+                </div>
+              </div>
               <img id="receiptPreview" class="receipt-preview hidden" alt="Receipt preview" />
             </div></div>
             <div class="card"><div class="card-header"><div><h3>Receipt scanner</h3><p>Protected by Firebase App Check and powered by Gemini.</p></div></div><div class="card-body">
@@ -1190,6 +1194,8 @@
       settlements: [],
       itemDrafts: [],
       scannedReceipt: null,
+      selectedReceiptFile: null,
+      receiptPreviewUrl: null,
       selectedExpenseId: null,
       activePage: "dashboard"
     };
@@ -1201,12 +1207,14 @@
     const makeId = () => globalThis.crypto?.randomUUID?.() || `id-${Date.now()}-${Math.random().toString(16).slice(2)}`;
     const roundMoney = (value) => Math.round((Number(value) + Number.EPSILON) * 100) / 100;
     const MEMBER_INITIALS = {
-      Shaishta: "B",
-      Sid: "S",
-      Annie: "E",
-      Arooshay: "I",
-      Nirmal: "L",
-      Nesreen: "N"
+      Mujahid: "M",
+      Shaishta: "SB",
+      Arooshay: "AI",
+      Annie: "AE",
+      Nesreen: "NA",
+      Nirmal: "NW",
+      Sid: "SS",
+      Pooja: "PP"
     };
 
     const initials = (name = "User") => {
@@ -1944,8 +1952,8 @@
     function closeSidebar() { $("#sidebar").classList.remove("open"); $("#sidebarOverlay").classList.remove("show"); }
 
     async function scanReceipt() {
-      const file = $("#receiptFile").files[0];
-      if (!file) return toast("Choose a receipt image first.", "error");
+      const file = state.selectedReceiptFile;
+      if (!file) return toast("Choose or take a receipt photo first.", "error");
       if (!receiptModel) {
         return toast("Gemini is not ready. Refresh BillBuddy and try again.", "error");
       }
@@ -2144,30 +2152,56 @@ Rules:
       $("#newSettlementBtn").addEventListener("click", () => openSettlement());
       $("#settlementForm").addEventListener("submit", saveSettlement);
 
-      $("#receiptFile").addEventListener("change", event => {
-        const file = event.target.files[0];
+      const handleReceiptFile = file => {
         if (!file) return;
+        if (!file.type.startsWith("image/")) {
+          return toast("Please choose an image file.", "error");
+        }
+
+        state.selectedReceiptFile = file;
+        state.scannedReceipt = null;
+
+        if (state.receiptPreviewUrl) {
+          URL.revokeObjectURL(state.receiptPreviewUrl);
+        }
+        state.receiptPreviewUrl = URL.createObjectURL(file);
+
         const preview = $("#receiptPreview");
-        preview.src = URL.createObjectURL(file);
+        preview.src = state.receiptPreviewUrl;
         preview.classList.remove("hidden");
+
         $("#scanReceiptBtn").disabled = false;
         $("#scanIdle").classList.remove("hidden");
         $("#scanProgress").classList.add("hidden");
         $("#scanResult").classList.add("hidden");
+      };
+
+      $("#receiptGalleryFile").addEventListener("change", event => {
+        handleReceiptFile(event.target.files[0]);
+        // Allow selecting the same gallery image again later.
+        event.target.value = "";
       });
+
+      $("#receiptCameraFile").addEventListener("change", event => {
+        handleReceiptFile(event.target.files[0]);
+        // Allow taking another picture immediately if needed.
+        event.target.value = "";
+      });
+
       $("#scanReceiptBtn").addEventListener("click", scanReceipt);
       $("#useScanBtn").addEventListener("click", useScannedReceipt);
 
       const uploadZone = $("#uploadZone");
-      ["dragenter", "dragover"].forEach(type => uploadZone.addEventListener(type, event => { event.preventDefault(); uploadZone.classList.add("dragging"); }));
-      ["dragleave", "drop"].forEach(type => uploadZone.addEventListener(type, event => { event.preventDefault(); uploadZone.classList.remove("dragging"); }));
+      ["dragenter", "dragover"].forEach(type => uploadZone.addEventListener(type, event => {
+        event.preventDefault();
+        uploadZone.classList.add("dragging");
+      }));
+      ["dragleave", "drop"].forEach(type => uploadZone.addEventListener(type, event => {
+        event.preventDefault();
+        uploadZone.classList.remove("dragging");
+      }));
       uploadZone.addEventListener("drop", event => {
-        const file = event.dataTransfer.files[0];
-        if (!file) return;
-        const transfer = new DataTransfer();
-        transfer.items.add(file);
-        $("#receiptFile").files = transfer.files;
-        $("#receiptFile").dispatchEvent(new Event("change"));
+        handleReceiptFile(event.dataTransfer.files[0]);
       });
     }
 
