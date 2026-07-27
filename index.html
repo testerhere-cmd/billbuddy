@@ -916,6 +916,224 @@
 
     * { scrollbar-color: #3b4760 #0d1422; }
   </style>
+
+  <style id="billbuddy-mobile-expense-fix">
+    html, body { max-width: 100%; overflow-x: hidden; }
+
+    @media (max-width: 620px) {
+      #page-add-expense,
+      #page-add-expense .expense-form,
+      #page-add-expense .card,
+      #page-add-expense .card-body,
+      #page-add-expense .card-header {
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+      }
+
+      #page-add-expense .card { overflow: hidden; }
+
+      #page-add-expense .card-header {
+        align-items: flex-start;
+        gap: 10px;
+      }
+
+      #page-add-expense .card-header > div {
+        flex: 1;
+        min-width: 0;
+      }
+
+      #page-add-expense .card-header p {
+        overflow-wrap: anywhere;
+      }
+
+      #addItemBtn {
+        flex: 0 0 auto;
+        padding: 10px 12px;
+        white-space: nowrap;
+      }
+
+      .payer-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+      }
+
+      .payer-grid .select-chip,
+      .payer-grid .select-chip span {
+        width: 100%;
+        min-width: 0;
+      }
+
+      .payer-grid .select-chip span {
+        justify-content: flex-start;
+        padding: 9px 10px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+
+      .payer-grid .select-chip b {
+        flex: 0 0 auto;
+      }
+
+      .item-table-wrap {
+        overflow: visible !important;
+        padding: 12px !important;
+      }
+
+      .item-table {
+        display: block;
+        width: 100%;
+        min-width: 0 !important;
+      }
+
+      .item-table thead { display: none; }
+      .item-table tbody {
+        display: grid;
+        width: 100%;
+        gap: 12px;
+      }
+
+      .item-main-row {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        grid-template-areas:
+          "name name"
+          "qty price"
+          "tax remove"
+          "people people"
+          "split split";
+        width: 100%;
+        gap: 13px 10px;
+        padding: 14px;
+        border: 1px solid var(--border);
+        border-radius: 15px;
+        background: var(--surface-2);
+      }
+
+      .item-main-row td {
+        display: block;
+        min-width: 0;
+        padding: 0;
+        border: 0;
+      }
+
+      .item-main-row td:not(.item-remove-cell)::before {
+        content: attr(data-label);
+        display: block;
+        margin-bottom: 6px;
+        color: var(--muted);
+        font-size: 0.7rem;
+        font-weight: 800;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+
+      .item-name-cell { grid-area: name; }
+      .item-qty-cell { grid-area: qty; }
+      .item-price-cell { grid-area: price; }
+      .item-tax-cell { grid-area: tax; }
+      .item-people-cell { grid-area: people; }
+      .item-split-cell { grid-area: split; }
+      .item-remove-cell {
+        grid-area: remove;
+        display: flex !important;
+        align-items: flex-end;
+        justify-content: flex-end;
+      }
+
+      .item-main-row input,
+      .item-main-row select,
+      .item-split-mode {
+        width: 100%;
+        min-width: 0;
+      }
+
+      .item-tax-toggle {
+        min-height: 42px;
+        white-space: normal;
+      }
+
+      .item-people {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        width: 100%;
+        max-width: none;
+        gap: 8px;
+      }
+
+      .mini-person {
+        display: flex;
+        justify-content: center;
+        min-width: 0;
+      }
+
+      .mini-person span {
+        width: 100%;
+        max-width: 54px;
+        height: 40px;
+        border-radius: 11px;
+        font-size: 0.72rem;
+      }
+
+      .item-remove-cell .icon-btn {
+        width: 42px;
+        height: 42px;
+      }
+
+      .portion-row {
+        display: block;
+        width: 100%;
+        margin-top: -4px;
+      }
+
+      .portion-row td {
+        display: block;
+        width: 100%;
+        padding: 0;
+        border: 0;
+        background: transparent;
+      }
+
+      .portion-panel {
+        width: 100%;
+        padding: 13px;
+      }
+
+      .portion-panel-header {
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .portion-editor {
+        display: grid;
+        grid-template-columns: 1fr;
+        width: 100%;
+      }
+
+      .portion-field {
+        width: 100%;
+        min-width: 0;
+        grid-template-columns: minmax(0, 1fr) 76px;
+      }
+
+      .portion-field input { width: 76px; }
+
+      #page-add-expense .privacy-note,
+      #page-add-expense .item-tax-note,
+      #page-add-expense .tax-option {
+        overflow-wrap: anywhere;
+      }
+    }
+
+    @media (max-width: 380px) {
+      .payer-grid { grid-template-columns: 1fr; }
+      .item-people { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+      #addItemBtn { padding: 9px 10px; font-size: 0.78rem; }
+    }
+  </style>
+
 </head>
 <body>
   <section id="loginPage" class="login-page">
@@ -1084,10 +1302,9 @@
               </div>
               <img id="receiptPreview" class="receipt-preview hidden" alt="Receipt preview" />
             </div></div>
-            <div class="card"><div class="card-header"><div><h3>Receipt scanner</h3><p>Protected by Firebase App Check and powered by Gemini.</p></div></div><div class="card-body">
+            <div class="card"><div class="card-body">
               <div id="scanIdle">
-                <div class="privacy-note">The selected image is sent through <strong>Firebase AI Logic</strong> to Gemini for extraction. No Gemini API key is stored in this HTML file. Always review the extracted items, prices, and HST selections before saving.</div>
-                <button id="scanReceiptBtn" class="btn btn-primary btn-block" style="margin-top:16px" disabled>Scan with Gemini</button>
+                <button id="scanReceiptBtn" class="btn btn-primary btn-block" disabled>Scan with Gemini</button>
               </div>
               <div id="scanProgress" class="hidden empty-state"><div class="empty-icon">⌛</div><strong>Reading your receipt</strong><span>Extracting line items and totals…</span></div>
               <div id="scanResult" class="hidden">
@@ -1656,7 +1873,7 @@
           return `<label class="portion-field"><span title="${escapeHtml(user.displayName)}">${escapeHtml(user.displayName)}</span><input class="portion-input" data-user-id="${escapeHtml(userId)}" type="number" min="0.01" step="0.01" value="${portion}" aria-label="Portions for ${escapeHtml(user.displayName)}"></label>`;
         }).join("");
 
-        const mainRow = `<tr class="item-main-row" data-item-id="${item.id}"><td><input class="item-name" value="${escapeHtml(item.name)}" placeholder="Item name" required></td><td><input class="item-quantity" type="number" min="0.01" step="0.01" value="${item.quantity}"></td><td><input class="item-price" type="number" min="0" step="0.01" value="${item.price}"></td><td><label class="item-tax-toggle" title="Apply 13% HST to this item only"><input class="item-taxable" type="checkbox" ${item.taxable ? "checked" : ""}><span class="item-tax-box">✓</span><b>13%</b></label></td><td><div class="item-people">${members.map(user => `<label class="mini-person" title="${escapeHtml(user.displayName)}"><input class="item-assignee" type="checkbox" value="${user.id}" ${item.assignedTo.includes(user.id) ? "checked" : ""}><span>${initials(user.displayName)}</span></label>`).join("")}</div></td><td><select class="item-split-mode" aria-label="Split method"><option value="equal" ${item.splitMode === "equal" ? "selected" : ""}>Equal split</option><option value="custom" ${item.splitMode === "custom" ? "selected" : ""}>Custom portions</option></select></td><td><button class="icon-btn btn-danger remove-item" type="button" title="Remove item">✕</button></td></tr>`;
+        const mainRow = `<tr class="item-main-row" data-item-id="${item.id}"><td class="item-name-cell" data-label="Item"><input class="item-name" value="${escapeHtml(item.name)}" placeholder="Item name" required></td><td class="item-qty-cell" data-label="Quantity"><input class="item-quantity" type="number" min="0.01" step="0.01" value="${item.quantity}"></td><td class="item-price-cell" data-label="Total price"><input class="item-price" type="number" min="0" step="0.01" value="${item.price}"></td><td class="item-tax-cell" data-label="13% HST"><label class="item-tax-toggle" title="Apply 13% HST to this item only"><input class="item-taxable" type="checkbox" ${item.taxable ? "checked" : ""}><span class="item-tax-box">✓</span><b>Apply 13%</b></label></td><td class="item-people-cell" data-label="Shared by"><div class="item-people">${members.map(user => `<label class="mini-person" title="${escapeHtml(user.displayName)}"><input class="item-assignee" type="checkbox" value="${user.id}" ${item.assignedTo.includes(user.id) ? "checked" : ""}><span>${initials(user.displayName)}</span></label>`).join("")}</div></td><td class="item-split-cell" data-label="Split method"><select class="item-split-mode" aria-label="Split method"><option value="equal" ${item.splitMode === "equal" ? "selected" : ""}>Equal split</option><option value="custom" ${item.splitMode === "custom" ? "selected" : ""}>Custom portions</option></select></td><td class="item-remove-cell"><button class="icon-btn btn-danger remove-item" type="button" title="Remove item" aria-label="Remove item">✕</button></td></tr>`;
 
         const portionRow = item.splitMode === "custom" ? `<tr class="portion-row" data-portion-for="${item.id}"><td colspan="7"><div class="portion-panel"><div class="portion-panel-header"><span><strong>Custom portions</strong> · Enter relative amounts such as 2, 0.5, 1 and 1.</span><span>HST follows the same portions.</span></div><div class="portion-editor">${portionFields || '<span style="color:var(--muted);font-size:.8rem">Select at least one person above.</span>'}</div></div></td></tr>` : "";
         return mainRow + portionRow;
