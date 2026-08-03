@@ -1134,6 +1134,420 @@
     }
   </style>
 
+
+  <style id="billbuddy-edit-logs-styles">
+    .expense-form-mode {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 14px;
+      width: 100%;
+    }
+
+    .expense-form-mode > div {
+      min-width: 0;
+    }
+
+    .modal-action-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .logs-layout {
+      display: grid;
+      grid-template-columns: minmax(250px, .78fr) minmax(0, 1.72fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .log-owner-control {
+      min-width: 220px;
+      margin: 0;
+    }
+
+    .log-person-list {
+      max-height: 680px;
+      overflow-y: auto;
+    }
+
+    .log-person-button {
+      width: 100%;
+      border: 0;
+      border-bottom: 1px solid var(--border);
+      border-radius: 0;
+      background: transparent;
+      color: inherit;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .log-person-button:hover,
+    .log-person-button.selected {
+      background: rgba(111, 94, 249, .10);
+    }
+
+    .log-person-button.selected {
+      box-shadow: inset 3px 0 0 var(--primary);
+    }
+
+    .log-balance-zero {
+      color: var(--muted);
+    }
+
+    .log-detail-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .log-person-heading {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .log-person-heading > div {
+      min-width: 0;
+    }
+
+    .log-person-heading h3 {
+      margin: 0;
+    }
+
+    .log-person-heading p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: .82rem;
+    }
+
+    .log-summary {
+      text-align: right;
+      flex: 0 0 auto;
+    }
+
+    .log-summary strong {
+      display: block;
+      font-size: 1.2rem;
+    }
+
+    .log-summary span {
+      color: var(--muted);
+      font-size: .76rem;
+    }
+
+    .ledger-explanation {
+      margin-bottom: 14px;
+      padding: 11px 13px;
+      border: 1px solid rgba(34, 211, 238, .28);
+      border-radius: 12px;
+      background: rgba(34, 211, 238, .06);
+      color: var(--muted);
+      font-size: .8rem;
+      line-height: 1.45;
+    }
+
+    .ledger-list {
+      display: grid;
+      gap: 9px;
+    }
+
+    .ledger-entry {
+      display: grid;
+      grid-template-columns: 98px minmax(0, 1fr) auto;
+      gap: 13px;
+      align-items: center;
+      padding: 13px;
+      border: 1px solid var(--border);
+      border-radius: 13px;
+      background: var(--surface-2);
+    }
+
+    .ledger-date {
+      color: var(--muted);
+      font-size: .76rem;
+    }
+
+    .ledger-main {
+      min-width: 0;
+    }
+
+    .ledger-main strong {
+      display: block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .ledger-main span {
+      display: block;
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: .78rem;
+    }
+
+    .ledger-values {
+      min-width: 118px;
+      text-align: right;
+    }
+
+    .ledger-change {
+      display: block;
+      font-weight: 800;
+    }
+
+    .ledger-running {
+      display: block;
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: .72rem;
+    }
+
+    .log-final-note {
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: .76rem;
+      text-align: right;
+    }
+
+    @media (max-width: 820px) {
+      .logs-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .log-person-list {
+        max-height: none;
+      }
+    }
+
+    @media (max-width: 620px) {
+      .expense-form-mode {
+        flex-direction: column;
+      }
+
+      #cancelEditBtn {
+        width: 100%;
+      }
+
+      .log-owner-control {
+        width: 100%;
+        min-width: 0;
+      }
+
+      .log-detail-header {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .log-summary {
+        width: 100%;
+        text-align: left;
+      }
+
+      .ledger-entry {
+        grid-template-columns: 1fr auto;
+        grid-template-areas:
+          "date values"
+          "main values";
+        gap: 5px 10px;
+      }
+
+      .ledger-date {
+        grid-area: date;
+      }
+
+      .ledger-main {
+        grid-area: main;
+      }
+
+      .ledger-values {
+        grid-area: values;
+        align-self: center;
+      }
+
+      .modal-footer {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .modal-action-group,
+      .modal-action-group .btn,
+      .modal-footer > .btn {
+        width: 100%;
+      }
+    }
+  </style>
+
+
+  <style id="billbuddy-ledger-breakdown-styles">
+    .ledger-entry.has-breakdown {
+      cursor: default;
+    }
+
+    .ledger-breakdown {
+      grid-column: 1 / -1;
+      width: 100%;
+      margin-top: 3px;
+      border-top: 1px solid var(--border);
+    }
+
+    .ledger-breakdown summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 2px 2px;
+      color: var(--primary-light);
+      font-size: .79rem;
+      font-weight: 800;
+      cursor: pointer;
+      list-style: none;
+      user-select: none;
+    }
+
+    .ledger-breakdown summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .ledger-breakdown summary::after {
+      content: "⌄";
+      flex: 0 0 auto;
+      font-size: 1rem;
+      transition: transform .18s ease;
+    }
+
+    .ledger-breakdown[open] summary::after {
+      transform: rotate(180deg);
+    }
+
+    .ledger-breakdown-content {
+      display: grid;
+      gap: 9px;
+      padding-top: 11px;
+    }
+
+    .ledger-breakdown-note {
+      color: var(--muted);
+      font-size: .75rem;
+      line-height: 1.45;
+    }
+
+    .ledger-item-line {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 12px;
+      align-items: center;
+      padding: 11px;
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      background: rgba(255, 255, 255, .018);
+    }
+
+    .ledger-item-copy {
+      min-width: 0;
+    }
+
+    .ledger-item-copy strong {
+      display: block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .ledger-item-copy span {
+      display: block;
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: .71rem;
+      line-height: 1.4;
+    }
+
+    .ledger-item-math {
+      min-width: 132px;
+      text-align: right;
+    }
+
+    .ledger-item-math span {
+      display: block;
+      color: var(--muted);
+      font-size: .69rem;
+      line-height: 1.45;
+    }
+
+    .ledger-item-math strong {
+      display: block;
+      margin-top: 3px;
+      font-size: .88rem;
+    }
+
+    .ledger-extra-line,
+    .ledger-breakdown-total {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 9px 11px;
+      border-radius: 10px;
+      background: rgba(111, 94, 249, .06);
+      font-size: .76rem;
+    }
+
+    .ledger-extra-line span,
+    .ledger-breakdown-total span {
+      color: var(--muted);
+    }
+
+    .ledger-breakdown-total {
+      border: 1px solid rgba(111, 94, 249, .28);
+      background: rgba(111, 94, 249, .10);
+      font-weight: 800;
+    }
+
+    .ledger-breakdown-total span {
+      color: var(--text);
+    }
+
+    .ledger-breakdown-actions {
+      display: flex;
+      justify-content: flex-end;
+      padding-top: 2px;
+    }
+
+    .ledger-open-expense {
+      padding: 8px 11px;
+      font-size: .74rem;
+    }
+
+    @media (max-width: 620px) {
+      .ledger-item-line {
+        grid-template-columns: 1fr;
+      }
+
+      .ledger-item-math {
+        min-width: 0;
+        text-align: left;
+      }
+
+      .ledger-item-math span {
+        display: inline;
+        margin-right: 10px;
+      }
+
+      .ledger-item-math strong {
+        margin-top: 5px;
+      }
+
+      .ledger-breakdown-actions,
+      .ledger-open-expense {
+        width: 100%;
+      }
+    }
+  </style>
+
 </head>
 <body>
   <section id="loginPage" class="login-page">
@@ -1182,6 +1596,7 @@
         <button class="nav-btn" data-page="add-expense"><span class="nav-icon">＋</span>Add expense</button>
         <button class="nav-btn" data-page="receipt"><span class="nav-icon">▤</span>Scan receipt</button>
         <button class="nav-btn" data-page="friends"><span class="nav-icon">♙</span>Friends</button>
+        <button class="nav-btn" data-page="logs"><span class="nav-icon">☷</span>Logs</button>
         <button class="nav-btn" data-page="settlements"><span class="nav-icon">✓</span>Settlements</button>
         <button id="adminNav" class="nav-btn hidden" data-page="admin"><span class="nav-icon">⚙</span>Admin</button>
       </nav>
@@ -1245,7 +1660,15 @@
         </section>
 
         <section id="page-add-expense" class="page">
-          <div class="page-header"><div><h2>Add expense</h2><p>Assign each item, choose its HST treatment, and use custom portions only when an equal split does not fit.</p></div></div>
+          <div class="page-header">
+            <div class="expense-form-mode">
+              <div>
+                <h2 id="expenseFormHeading">Add expense</h2>
+                <p id="expenseFormCopy">Assign each item, choose its HST treatment, and use custom portions only when an equal split does not fit.</p>
+              </div>
+              <button id="cancelEditBtn" class="btn btn-ghost hidden" type="button">Cancel editing</button>
+            </div>
+          </div>
           <form id="expenseForm" class="expense-form">
             <div class="card"><div class="card-body">
               <div class="grid form-grid">
@@ -1322,6 +1745,35 @@
           <div id="friendGrid" class="grid friend-grid"></div>
         </section>
 
+        <section id="page-logs" class="page">
+          <div class="page-header">
+            <div>
+              <h2>Logs</h2>
+              <p>See every expense and settlement that builds a balance between two people.</p>
+            </div>
+            <div id="logOwnerWrap" class="field log-owner-control hidden">
+              <label for="logOwnerSelect">Admin: view logs as</label>
+              <select id="logOwnerSelect"></select>
+            </div>
+          </div>
+
+          <div class="logs-layout">
+            <div class="card">
+              <div class="card-header">
+                <div>
+                  <h3 id="logPeopleHeading">People</h3>
+                  <p>All members appear, including settled balances.</p>
+                </div>
+              </div>
+              <div id="logPeopleList" class="list log-person-list"></div>
+            </div>
+
+            <div class="card">
+              <div id="logDetail" class="card-body"></div>
+            </div>
+          </div>
+        </section>
+
         <section id="page-settlements" class="page">
           <div class="page-header"><div><h2>Settlements</h2><p>Payments recorded between group members.</p></div><button id="newSettlementBtn" class="btn btn-primary">Record payment</button></div>
           <div class="card"><div id="settlementList" class="list"></div></div>
@@ -1366,7 +1818,10 @@
       <div class="modal-header"><h3 id="expenseModalTitle">Expense details</h3><button class="icon-btn" data-close-modal="expenseModal">✕</button></div>
       <div id="expenseModalBody" class="modal-body"></div>
       <div class="modal-footer" style="justify-content:space-between">
-        <button id="deleteExpenseBtn" class="btn btn-danger hidden" type="button">Delete expense</button>
+        <div class="modal-action-group">
+          <button id="editExpenseBtn" class="btn btn-primary hidden" type="button">Edit expense</button>
+          <button id="deleteExpenseBtn" class="btn btn-danger hidden" type="button">Delete expense</button>
+        </div>
         <button class="btn btn-ghost" data-close-modal="expenseModal">Close</button>
       </div>
     </div>
@@ -1414,6 +1869,9 @@
       selectedReceiptFile: null,
       receiptPreviewUrl: null,
       selectedExpenseId: null,
+      editingExpenseId: null,
+      logOwnerId: null,
+      selectedLogFriendId: null,
       activePage: "dashboard"
     };
 
@@ -1645,7 +2103,7 @@
       $("#sidebarRole").textContent = state.currentUser.role;
       $("#sidebarAvatar").textContent = initials(state.currentUser.displayName);
       $("#welcomeHeading").textContent = `Welcome, ${state.currentUser.displayName.split(" ")[0]}`;
-      initializeDraft();
+      resetExpenseForm(false);
       renderAll();
       navigate("dashboard");
     }
@@ -1715,6 +2173,7 @@
       renderExpenseFilters();
       renderExpenses();
       renderFriends();
+      renderLogs();
       renderSettlements();
       renderPayerOptions();
       renderSettlementOptions();
@@ -1793,6 +2252,579 @@
       }).join("");
     }
 
+    function activeMembers() {
+      return state.users.filter(
+        user => user.active !== false && user.role !== "admin"
+      );
+    }
+
+    function currentLogOwnerId() {
+      if (!currentIsAdmin()) return state.currentUser.id;
+      const members = activeMembers();
+      if (!members.some(user => user.id === state.logOwnerId)) {
+        state.logOwnerId = members[0]?.id || null;
+      }
+      return state.logOwnerId;
+    }
+
+    function compactNumber(value) {
+      return Number(value || 0).toLocaleString(LOCALE, {
+        maximumFractionDigits: 2
+      });
+    }
+
+    function expenseBreakdownForUser(expense, userId, expectedShare) {
+      const allItems = Array.isArray(expense.items)
+        ? expense.items
+        : [];
+      const itemLines = [];
+      let allocatedSubtotal = 0;
+      let userBaseTotal = 0;
+
+      allItems.forEach((item, index) => {
+        const linePrice = Number(item.price || 0);
+        const assignedTo = Array.isArray(item.assignedTo)
+          ? item.assignedTo
+          : [];
+
+        const weights = assignedTo
+          .map(assignedUserId => ({
+            userId: assignedUserId,
+            weight: item.splitMode === "custom"
+              ? Number(item.portions?.[assignedUserId] || 0)
+              : 1
+          }))
+          .filter(entry => (
+            Number.isFinite(entry.weight)
+            && entry.weight > 0
+          ));
+
+        const totalWeight = weights.reduce(
+          (sum, entry) => sum + entry.weight,
+          0
+        );
+
+        if (linePrice <= 0 || !weights.length || totalWeight <= 0) {
+          return;
+        }
+
+        // This matches the subtotal base used by calculateDraft() for tip.
+        allocatedSubtotal += linePrice;
+
+        const userWeight = weights.find(
+          entry => entry.userId === userId
+        );
+        if (!userWeight) return;
+
+        const ratio = userWeight.weight / totalWeight;
+        const fullItemTax = item.taxable
+          ? roundMoney(linePrice * HST_RATE)
+          : 0;
+        const rawBaseShare = linePrice * ratio;
+        const rawTaxShare = fullItemTax * ratio;
+
+        // Display components are rounded individually so the visible math
+        // can be added by a person. Any final penny difference is shown as
+        // a separate rounding adjustment below.
+        const baseShare = roundMoney(rawBaseShare);
+        const taxShare = roundMoney(rawTaxShare);
+        const itemTotal = roundMoney(baseShare + taxShare);
+
+        userBaseTotal += rawBaseShare;
+
+        itemLines.push({
+          index,
+          name: item.name || `Item ${index + 1}`,
+          quantity: Number(item.quantity || 1),
+          linePrice: roundMoney(linePrice),
+          taxable: Boolean(item.taxable),
+          splitMode: item.splitMode === "custom"
+            ? "custom"
+            : "equal",
+          userWeight: userWeight.weight,
+          totalWeight,
+          participantCount: weights.length,
+          baseShare,
+          taxShare,
+          itemTotal
+        });
+      });
+
+      const rawTipShare = (
+        allocatedSubtotal > 0
+        && userBaseTotal > 0
+      )
+        ? Number(expense.tip || 0)
+          * (userBaseTotal / allocatedSubtotal)
+        : 0;
+
+      const tipShare = roundMoney(rawTipShare);
+      const visibleComponentsTotal = roundMoney(
+        itemLines.reduce(
+          (sum, item) => sum + item.itemTotal,
+          0
+        ) + tipShare
+      );
+      const finalExpectedShare = roundMoney(
+        Number(expectedShare || 0)
+      );
+      const roundingAdjustment = roundMoney(
+        finalExpectedShare - visibleComponentsTotal
+      );
+
+      return {
+        totalReceiptItems: allItems.length,
+        affectingItemCount: itemLines.length,
+        userName: userById(userId).displayName,
+        items: itemLines,
+        tipShare,
+        roundingAdjustment,
+        expectedShare: finalExpectedShare
+      };
+    }
+
+    function ledgerBreakdownHtml(entry) {
+      const breakdown = entry.breakdown;
+      if (
+        !breakdown
+        || breakdown.totalReceiptItems <= 1
+      ) {
+        return "";
+      }
+
+      const itemWord = breakdown.affectingItemCount === 1
+        ? "item"
+        : "items";
+      const receiptItemWord = breakdown.totalReceiptItems === 1
+        ? "item"
+        : "items";
+
+      return `
+        <details class="ledger-breakdown">
+          <summary>
+            <span>
+              View ${breakdown.affectingItemCount} ${itemWord}
+              affecting this balance
+            </span>
+          </summary>
+
+          <div class="ledger-breakdown-content">
+            <div class="ledger-breakdown-note">
+              ${breakdown.affectingItemCount} of
+              ${breakdown.totalReceiptItems} receipt ${receiptItemWord}
+              contributed to ${escapeHtml(breakdown.userName)}'s share.
+              Each line below shows the exact portion used in the balance.
+            </div>
+
+            ${breakdown.items.map(item => {
+              const splitText = item.splitMode === "custom"
+                ? `${compactNumber(item.userWeight)} of ${compactNumber(item.totalWeight)} portions`
+                : `Equal split · 1 of ${item.participantCount} people`;
+
+              return `
+                <div class="ledger-item-line">
+                  <div class="ledger-item-copy">
+                    <strong>${escapeHtml(item.name)}</strong>
+                    <span>
+                      Quantity ${compactNumber(item.quantity)}
+                      · Full line price ${money(item.linePrice)}
+                      · ${escapeHtml(splitText)}
+                    </span>
+                  </div>
+
+                  <div class="ledger-item-math">
+                    <span>Pre-tax share ${money(item.baseShare)}</span>
+                    <span>HST ${money(item.taxShare)}</span>
+                    <strong>
+                      ${escapeHtml(breakdown.userName)}:
+                      ${money(item.itemTotal)}
+                    </strong>
+                  </div>
+                </div>
+              `;
+            }).join("")}
+
+            ${Math.abs(breakdown.tipShare) >= .01
+              ? `
+                <div class="ledger-extra-line">
+                  <span>Allocated tip</span>
+                  <strong>${money(breakdown.tipShare)}</strong>
+                </div>
+              `
+              : ""
+            }
+
+            ${Math.abs(breakdown.roundingAdjustment) >= .01
+              ? `
+                <div class="ledger-extra-line">
+                  <span>
+                    Penny rounding adjustment
+                    ${breakdown.roundingAdjustment > 0 ? "added" : "removed"}
+                  </span>
+                  <strong>
+                    ${breakdown.roundingAdjustment > 0 ? "+" : "−"}
+                    ${money(Math.abs(breakdown.roundingAdjustment))}
+                  </strong>
+                </div>
+              `
+              : ""
+            }
+
+            <div class="ledger-breakdown-total">
+              <span>Expense effect on this pair balance</span>
+              <strong>${money(breakdown.expectedShare)}</strong>
+            </div>
+
+            <div class="ledger-breakdown-actions">
+              <button
+                class="btn btn-ghost ledger-open-expense"
+                data-log-expense-id="${escapeHtml(entry.expenseId)}"
+                type="button"
+              >
+                Open full expense
+              </button>
+            </div>
+          </div>
+        </details>
+      `;
+    }
+
+    function pairLedgerEntries(ownerId, friendId) {
+      const entries = [];
+
+      state.expenses.forEach(expense => {
+        const splits = expense.splits || {};
+
+        if (
+          expense.paidBy === ownerId
+          && Number(splits[friendId] || 0) > 0
+        ) {
+          entries.push({
+            id: `expense-${expense.id}`,
+            type: "expense",
+            date: expense.date,
+            createdAt: expense.createdAt,
+            title: expense.title || "Expense",
+            description: `${userById(ownerId).displayName} paid · ${userById(friendId).displayName}'s share`,
+            amount: Number(splits[friendId] || 0),
+            effect: Number(splits[friendId] || 0),
+            expenseId: expense.id,
+            breakdown: expenseBreakdownForUser(
+              expense,
+              friendId,
+              Number(splits[friendId] || 0)
+            )
+          });
+        }
+
+        if (
+          expense.paidBy === friendId
+          && Number(splits[ownerId] || 0) > 0
+        ) {
+          entries.push({
+            id: `expense-${expense.id}`,
+            type: "expense",
+            date: expense.date,
+            createdAt: expense.createdAt,
+            title: expense.title || "Expense",
+            description: `${userById(friendId).displayName} paid · ${userById(ownerId).displayName}'s share`,
+            amount: Number(splits[ownerId] || 0),
+            effect: -Number(splits[ownerId] || 0),
+            expenseId: expense.id,
+            breakdown: expenseBreakdownForUser(
+              expense,
+              ownerId,
+              Number(splits[ownerId] || 0)
+            )
+          });
+        }
+      });
+
+      state.settlements.forEach(settlement => {
+        const directlyRelated = (
+          settlement.fromUserId === ownerId
+          && settlement.toUserId === friendId
+        ) || (
+          settlement.fromUserId === friendId
+          && settlement.toUserId === ownerId
+        );
+
+        if (!directlyRelated) return;
+
+        const amount = Number(settlement.amount || 0);
+        const ownerPaidFriend = settlement.fromUserId === ownerId;
+
+        entries.push({
+          id: `settlement-${settlement.id}`,
+          type: "settlement",
+          date: settlement.date,
+          createdAt: settlement.createdAt,
+          title: settlement.note || "Settlement",
+          description: `${userById(settlement.fromUserId).displayName} paid ${userById(settlement.toUserId).displayName}`,
+          amount,
+          effect: ownerPaidFriend ? amount : -amount
+        });
+      });
+
+      const createdTime = value => {
+        if (!value) return 0;
+        if (typeof value.toMillis === "function") return value.toMillis();
+        if (typeof value.seconds === "number") return value.seconds * 1000;
+        const parsed = Date.parse(value);
+        return Number.isFinite(parsed) ? parsed : 0;
+      };
+
+      entries.sort((a, b) => {
+        const dateCompare = String(a.date || "").localeCompare(
+          String(b.date || "")
+        );
+        if (dateCompare !== 0) return dateCompare;
+        return createdTime(a.createdAt) - createdTime(b.createdAt);
+      });
+
+      let runningBalance = 0;
+      return entries.map(entry => {
+        runningBalance = roundMoney(runningBalance + entry.effect);
+        return { ...entry, runningBalance };
+      });
+    }
+
+    function balanceRelationshipText(ownerId, friendId, amount) {
+      const owner = userById(ownerId);
+      const friend = userById(friendId);
+
+      if (amount > 0) {
+        return `${friend.displayName} owes ${owner.displayName}`;
+      }
+      if (amount < 0) {
+        return `${owner.displayName} owes ${friend.displayName}`;
+      }
+      return "Settled";
+    }
+
+    function renderLogs() {
+      const ownerId = currentLogOwnerId();
+      const detail = $("#logDetail");
+      const peopleList = $("#logPeopleList");
+      const ownerWrap = $("#logOwnerWrap");
+      const ownerSelect = $("#logOwnerSelect");
+
+      if (!ownerId) {
+        peopleList.innerHTML = "";
+        detail.innerHTML = emptyHtml(
+          "No members available",
+          "Add an active member to use logs.",
+          "☷"
+        );
+        return;
+      }
+
+      const members = activeMembers();
+      ownerWrap.classList.toggle("hidden", !currentIsAdmin());
+
+      if (currentIsAdmin()) {
+        const previousOwner = ownerSelect.value || ownerId;
+        ownerSelect.innerHTML = members.map(user => `
+          <option value="${escapeHtml(user.id)}">
+            ${escapeHtml(user.displayName)}
+          </option>
+        `).join("");
+        ownerSelect.value = members.some(user => user.id === previousOwner)
+          ? previousOwner
+          : ownerId;
+        state.logOwnerId = ownerSelect.value;
+      }
+
+      const balances = calculateUserBalances(ownerId);
+      const friends = members
+        .filter(user => user.id !== ownerId)
+        .map(user => ({
+          user,
+          amount: roundMoney(Number(balances[user.id] || 0))
+        }))
+        .sort((a, b) => {
+          const openDifference = Number(Math.abs(b.amount) >= .01)
+            - Number(Math.abs(a.amount) >= .01);
+          if (openDifference !== 0) return openDifference;
+          const amountDifference = Math.abs(b.amount) - Math.abs(a.amount);
+          if (amountDifference !== 0) return amountDifference;
+          return a.user.displayName.localeCompare(b.user.displayName);
+        });
+
+      if (
+        !friends.some(
+          entry => entry.user.id === state.selectedLogFriendId
+        )
+      ) {
+        state.selectedLogFriendId = friends[0]?.user.id || null;
+      }
+
+      $("#logPeopleHeading").textContent = currentIsAdmin()
+        ? `Balances for ${userById(ownerId).displayName}`
+        : "Your balances";
+
+      peopleList.innerHTML = friends.length
+        ? friends.map(({ user, amount }) => {
+            const relationship = balanceRelationshipText(
+              ownerId,
+              user.id,
+              amount
+            );
+            const valueClass = amount > 0
+              ? "positive"
+              : amount < 0
+                ? "negative"
+                : "log-balance-zero";
+
+            return `
+              <button
+                class="list-item log-person-button ${user.id === state.selectedLogFriendId ? "selected" : ""}"
+                data-log-friend="${escapeHtml(user.id)}"
+                type="button"
+              >
+                <div class="avatar">${initials(user.displayName)}</div>
+                <div class="list-main">
+                  <strong>${escapeHtml(user.displayName)}</strong>
+                  <span>${escapeHtml(relationship)}</span>
+                </div>
+                <div class="list-amount ${valueClass}">
+                  ${money(Math.abs(amount))}
+                </div>
+              </button>
+            `;
+          }).join("")
+        : emptyHtml(
+            "No other members",
+            "There is no one else to compare balances with.",
+            "☷"
+          );
+
+      const friendId = state.selectedLogFriendId;
+      if (!friendId) {
+        detail.innerHTML = emptyHtml(
+          "Choose a person",
+          "Select a member to review how the balance was created.",
+          "☷"
+        );
+        return;
+      }
+
+      const owner = userById(ownerId);
+      const friend = userById(friendId);
+      const finalBalance = roundMoney(Number(balances[friendId] || 0));
+      const entries = pairLedgerEntries(ownerId, friendId);
+      const finalClass = finalBalance > 0
+        ? "positive"
+        : finalBalance < 0
+          ? "negative"
+          : "";
+
+      detail.innerHTML = `
+        <div class="log-detail-header">
+          <div class="log-person-heading">
+            <div class="avatar">${initials(friend.displayName)}</div>
+            <div>
+              <h3>${escapeHtml(friend.displayName)}</h3>
+              <p>Balance history with ${escapeHtml(owner.displayName)}</p>
+            </div>
+          </div>
+          <div class="log-summary">
+            <strong class="${finalClass}">
+              ${money(Math.abs(finalBalance))}
+            </strong>
+            <span>
+              ${escapeHtml(balanceRelationshipText(ownerId, friendId, finalBalance))}
+            </span>
+          </div>
+        </div>
+
+        <div class="ledger-explanation">
+          Entries are shown from oldest to newest. A positive change means
+          ${escapeHtml(friend.displayName)} owes ${escapeHtml(owner.displayName)}
+          more. A negative change means ${escapeHtml(owner.displayName)} owes
+          ${escapeHtml(friend.displayName)} more. Settlements reduce the
+          applicable balance.
+        </div>
+
+        <div class="ledger-list">
+          ${entries.length
+            ? entries.map(entry => {
+                const changeClass = entry.effect > 0
+                  ? "positive"
+                  : entry.effect < 0
+                    ? "negative"
+                    : "";
+                const runningClass = entry.runningBalance > 0
+                  ? "positive"
+                  : entry.runningBalance < 0
+                    ? "negative"
+                    : "";
+
+                const hasBreakdown = (
+                  entry.type === "expense"
+                  && entry.breakdown?.totalReceiptItems > 1
+                );
+
+                return `
+                  <div
+                    class="ledger-entry ${hasBreakdown ? "has-breakdown" : ""}"
+                    ${entry.expenseId && !hasBreakdown
+                      ? `data-expense-id="${escapeHtml(entry.expenseId)}" role="button" tabindex="0"`
+                      : ""
+                    }
+                  >
+                    <div class="ledger-date">
+                      ${escapeHtml(formatDate(entry.date))}
+                    </div>
+                    <div class="ledger-main">
+                      <strong>
+                        ${entry.type === "settlement" ? "Settlement: " : ""}
+                        ${escapeHtml(entry.title)}
+                      </strong>
+                      <span>
+                        ${escapeHtml(entry.description)} · ${money(entry.amount)}
+                        ${hasBreakdown
+                          ? ` · ${entry.breakdown.affectingItemCount} of ${entry.breakdown.totalReceiptItems} items`
+                          : ""
+                        }
+                      </span>
+                    </div>
+                    <div class="ledger-values">
+                      <span class="ledger-change ${changeClass}">
+                        ${entry.effect > 0 ? "+" : entry.effect < 0 ? "−" : ""}
+                        ${money(Math.abs(entry.effect))}
+                      </span>
+                      <span class="ledger-running ${runningClass}">
+                        ${escapeHtml(balanceRelationshipText(ownerId, friendId, entry.runningBalance))}
+                        ${money(Math.abs(entry.runningBalance))}
+                      </span>
+                    </div>
+
+                    ${hasBreakdown ? ledgerBreakdownHtml(entry) : ""}
+                  </div>
+                `;
+              }).join("")
+            : emptyHtml(
+                "No direct transactions",
+                "No expense or settlement currently contributes to this pair balance.",
+                "☷"
+              )
+          }
+        </div>
+
+        ${entries.length
+          ? `<div class="log-final-note">
+               Final pair balance:
+               <strong class="${finalClass}">
+                 ${escapeHtml(balanceRelationshipText(ownerId, friendId, finalBalance))}
+                 ${money(Math.abs(finalBalance))}
+               </strong>
+             </div>`
+          : ""
+        }
+      `;
+    }
+
     function renderSettlements() {
       const settlements = visibleSettlements().sort((a, b) => String(b.date).localeCompare(String(a.date)));
       $("#settlementList").innerHTML = settlements.length ? settlements.map(settlement => {
@@ -1834,6 +2866,78 @@
       $("#settlementFrom").value = state.currentUser.id;
       const another = members.find(user => user.id !== state.currentUser.id);
       if (another) $("#settlementTo").value = another.id;
+    }
+
+    function canEditExpense(expense) {
+      return Boolean(
+        expense
+        && (
+          currentIsAdmin()
+          || expense.createdBy === state.currentUser?.id
+          || expense.paidBy === state.currentUser?.id
+        )
+      );
+    }
+
+    function updateExpenseFormMode() {
+      const editing = Boolean(state.editingExpenseId);
+      $("#expenseFormHeading").textContent = editing
+        ? "Edit expense"
+        : "Add expense";
+      $("#expenseFormCopy").textContent = editing
+        ? "Correct the description, payer, people, prices, HST, portions, or tip. Saving will recalculate everyone’s balance."
+        : "Assign each item, choose its HST treatment, and use custom portions only when an equal split does not fit.";
+      $("#saveExpenseBtn").textContent = editing
+        ? "Save changes"
+        : "Save expense";
+      $("#cancelEditBtn").classList.toggle("hidden", !editing);
+    }
+
+    function selectPayer(payerId) {
+      renderPayerOptions();
+      const input = document.querySelector(
+        `input[name="payer"][value="${CSS.escape(payerId)}"]`
+      );
+      if (input) input.checked = true;
+    }
+
+    function resetExpenseForm(navigateAfter = false) {
+      state.editingExpenseId = null;
+      $("#expenseTitle").value = "";
+      state.scannedReceipt = null;
+      initializeDraft();
+      renderPayerOptions();
+      selectPayer(state.currentUser.id);
+      updateExpenseFormMode();
+
+      if (navigateAfter) navigate("expenses");
+    }
+
+    function startEditingExpense(expenseId) {
+      const expense = state.expenses.find(entry => entry.id === expenseId);
+      if (!expense || !canEditExpense(expense)) {
+        return toast(
+          "Only the admin, the person who recorded it, or the person who paid can edit this expense.",
+          "error"
+        );
+      }
+
+      state.editingExpenseId = expense.id;
+      state.scannedReceipt = null;
+      initializeDraft(expense.items || []);
+      $("#expenseTitle").value = expense.title || "";
+      $("#expenseDate").value = expense.date || today();
+      $("#expenseTip").value = Number(expense.tip || 0).toFixed(2);
+      selectPayer(expense.paidBy);
+      updateDraftTotals();
+      updateExpenseFormMode();
+      closeModal("expenseModal");
+      navigate("add-expense");
+    }
+
+    function openNewExpenseForm() {
+      resetExpenseForm(false);
+      navigate("add-expense");
     }
 
     function initializeDraft(items = null) {
@@ -1989,43 +3093,106 @@
       const button = $("#saveExpenseBtn");
       syncDraftFromRows();
       const calculation = calculateDraft();
-      const payer = document.querySelector('input[name="payer"]:checked')?.value;
-      const invalidItem = state.itemDrafts.find(item => !item.name || Number(item.price) <= 0 || !item.assignedTo.length);
-      if (invalidItem) return toast("Every item needs a name, price, and at least one person.", "error");
-      const invalidCustomSplit = state.itemDrafts.find(item => item.splitMode === "custom" && item.assignedTo.some(userId => Number(item.portions?.[userId] || 0) <= 0));
-      if (invalidCustomSplit) return toast("Every selected person needs a custom portion greater than 0.", "error");
-      if (!payer) return toast("Choose who paid.", "error");
-      if (!Object.keys(calculation.splits).length) return toast("Assign at least one item.", "error");
+      const payer = document.querySelector(
+        'input[name="payer"]:checked'
+      )?.value;
+      const invalidItem = state.itemDrafts.find(
+        item => !item.name
+          || Number(item.price) <= 0
+          || !item.assignedTo.length
+      );
+      if (invalidItem) {
+        return toast(
+          "Every item needs a name, price, and at least one person.",
+          "error"
+        );
+      }
 
-      const participantIds = [...new Set([payer, ...Object.keys(calculation.splits)])];
-      const expense = {
+      const invalidCustomSplit = state.itemDrafts.find(
+        item => item.splitMode === "custom"
+          && item.assignedTo.some(
+            userId => Number(item.portions?.[userId] || 0) <= 0
+          )
+      );
+      if (invalidCustomSplit) {
+        return toast(
+          "Every selected person needs a custom portion greater than 0.",
+          "error"
+        );
+      }
+      if (!payer) return toast("Choose who paid.", "error");
+      if (!Object.keys(calculation.splits).length) {
+        return toast("Assign at least one item.", "error");
+      }
+
+      const participantIds = [
+        ...new Set([payer, ...Object.keys(calculation.splits)])
+      ];
+      const expenseData = {
         title: $("#expenseTitle").value.trim(),
         date: $("#expenseDate").value,
         paidBy: payer,
         participantIds,
         items: state.itemDrafts.map(({ id, ...item }) => item),
-        ...calculation,
-        createdBy: state.currentUser.id,
-        createdAt: new Date().toISOString()
+        ...calculation
       };
 
-      try {
-        setLoading(button, true, "Saving…");
-        if (!firebaseEnabled || !db) throw new Error("Firebase is not connected.");
-        await firebaseApi.addDoc(
-          firebaseApi.collection(db, "expenses"),
-          { ...expense, createdAt: firebaseApi.serverTimestamp() }
+      const existingExpense = state.editingExpenseId
+        ? state.expenses.find(
+            expense => expense.id === state.editingExpenseId
+          )
+        : null;
+
+      if (state.editingExpenseId && !canEditExpense(existingExpense)) {
+        return toast(
+          "You no longer have permission to edit this expense.",
+          "error"
         );
-        toast("Expense saved.", "success");
-        $("#expenseTitle").value = "";
-        state.scannedReceipt = null;
-        initializeDraft();
+      }
+
+      try {
+        setLoading(
+          button,
+          true,
+          existingExpense ? "Saving changes…" : "Saving…"
+        );
+        if (!firebaseEnabled || !db) {
+          throw new Error("Firebase is not connected.");
+        }
+
+        if (existingExpense) {
+          await firebaseApi.updateDoc(
+            firebaseApi.doc(db, "expenses", existingExpense.id),
+            {
+              ...expenseData,
+              updatedBy: state.currentUser.id,
+              updatedAt: firebaseApi.serverTimestamp()
+            }
+          );
+          toast("Expense updated. Balances were recalculated.", "success");
+        } else {
+          await firebaseApi.addDoc(
+            firebaseApi.collection(db, "expenses"),
+            {
+              ...expenseData,
+              createdBy: state.currentUser.id,
+              createdAt: firebaseApi.serverTimestamp()
+            }
+          );
+          toast("Expense saved.", "success");
+        }
+
+        resetExpenseForm(false);
         navigate("expenses");
       } catch (error) {
         console.error(error);
-        toast(`Could not save expense: ${error.message}`, "error");
+        toast(
+          `Could not ${existingExpense ? "update" : "save"} expense: ${error.message}`,
+          "error"
+        );
       } finally {
         setLoading(button, false);
+        updateExpenseFormMode();
       }
     }
 
@@ -2104,7 +3271,9 @@
       const expense = state.expenses.find(entry => entry.id === expenseId);
       if (!expense) return;
       state.selectedExpenseId = expenseId;
+      const editButton = $("#editExpenseBtn");
       const deleteButton = $("#deleteExpenseBtn");
+      editButton.classList.toggle("hidden", !canEditExpense(expense));
       deleteButton.classList.toggle("hidden", !canDeleteExpense(expense));
       const payer = userById(expense.paidBy);
       $("#expenseModalTitle").textContent = expense.title;
@@ -2156,7 +3325,7 @@
       const pageTitles = {
         dashboard: ["Dashboard", "Your group expense overview"], expenses: ["Expenses", "Transactions and receipt details"],
         "add-expense": ["Add expense", "Create an item-level split"], receipt: ["Scan receipt", "Extract details with Gemini"],
-        friends: ["Friends", "Open balances only"], settlements: ["Settlements", "Recorded payments"], admin: ["Admin", "Complete group visibility"]
+        friends: ["Friends", "Open balances only"], logs: ["Logs", "How each balance was created"], settlements: ["Settlements", "Recorded payments"], admin: ["Admin", "Complete group visibility"]
       };
       const [title, subtitle] = pageTitles[pageName] || pageTitles.dashboard;
       $("#topbarTitle").textContent = title;
@@ -2310,11 +3479,23 @@ Rules:
         } finally { setLoading(button, false); }
       });
       $("#logoutBtn").addEventListener("click", async () => { if (auth) await firebaseApi.signOut(auth); });
-      $("#quickAddBtn").addEventListener("click", () => navigate("add-expense"));
+      $("#quickAddBtn").addEventListener("click", openNewExpenseForm);
       $("#mobileMenuBtn").addEventListener("click", openSidebar);
       $("#sidebarOverlay").addEventListener("click", closeSidebar);
-      $$(".nav-btn").forEach(button => button.addEventListener("click", () => navigate(button.dataset.page)));
-      $$('[data-go]').forEach(button => button.addEventListener("click", () => navigate(button.dataset.go)));
+      $$(".nav-btn").forEach(button => button.addEventListener("click", () => {
+        if (button.dataset.page === "add-expense") {
+          openNewExpenseForm();
+          return;
+        }
+        navigate(button.dataset.page);
+      }));
+      $$('[data-go]').forEach(button => button.addEventListener("click", () => {
+        if (button.dataset.go === "add-expense") {
+          openNewExpenseForm();
+          return;
+        }
+        navigate(button.dataset.go);
+      }));
 
       $("#addItemBtn").addEventListener("click", () => {
         syncDraftFromRows();
@@ -2355,15 +3536,53 @@ Rules:
       $("#expensePayer").addEventListener("change", renderExpenses);
 
       document.addEventListener("click", event => {
+        const logExpenseButton = event.target.closest(
+          "[data-log-expense-id]"
+        );
+        if (logExpenseButton) {
+          event.preventDefault();
+          event.stopPropagation();
+          showExpenseDetails(
+            logExpenseButton.dataset.logExpenseId
+          );
+          return;
+        }
+
         const expenseButton = event.target.closest("[data-expense-id]");
-        if (expenseButton) showExpenseDetails(expenseButton.dataset.expenseId);
+        if (expenseButton) {
+          showExpenseDetails(expenseButton.dataset.expenseId);
+        }
         const settleButton = event.target.closest("[data-settle-friend]");
-        if (settleButton) openSettlement(settleButton.dataset.settleFriend, Number(settleButton.dataset.balance));
+        if (settleButton) {
+          openSettlement(
+            settleButton.dataset.settleFriend,
+            Number(settleButton.dataset.balance)
+          );
+        }
+        const logFriendButton = event.target.closest("[data-log-friend]");
+        if (logFriendButton) {
+          state.selectedLogFriendId = logFriendButton.dataset.logFriend;
+          renderLogs();
+        }
         const closeButton = event.target.closest("[data-close-modal]");
         if (closeButton) closeModal(closeButton.dataset.closeModal);
       });
 
+      $("#editExpenseBtn").addEventListener("click", () => {
+        if (state.selectedExpenseId) {
+          startEditingExpense(state.selectedExpenseId);
+        }
+      });
       $("#deleteExpenseBtn").addEventListener("click", deleteSelectedExpense);
+      $("#cancelEditBtn").addEventListener("click", () => {
+        resetExpenseForm(true);
+      });
+
+      $("#logOwnerSelect").addEventListener("change", event => {
+        state.logOwnerId = event.target.value;
+        state.selectedLogFriendId = null;
+        renderLogs();
+      });
 
       $("#settleAnyBtn").addEventListener("click", () => openSettlement());
       $("#newSettlementBtn").addEventListener("click", () => openSettlement());
