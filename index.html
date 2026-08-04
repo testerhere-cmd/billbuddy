@@ -1548,6 +1548,156 @@
     }
   </style>
 
+
+  <style id="billbuddy-mobile-width-fix">
+    /* Prevent any app section from making the phone page wider than its viewport. */
+    html,
+    body {
+      width: 100%;
+      max-width: 100%;
+      overflow-x: hidden;
+    }
+
+    .app-shell,
+    .main-area,
+    .content,
+    .page,
+    .card,
+    .list {
+      min-width: 0;
+      max-width: 100%;
+    }
+
+    .card-header > div,
+    .page-header > div,
+    .header-actions,
+    .list-main {
+      min-width: 0;
+    }
+
+    button.list-item,
+    .expense-list-item {
+      width: 100%;
+      min-width: 0;
+      max-width: 100%;
+      overflow: hidden;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+
+    .expense-list-item .list-amount {
+      flex: 0 0 auto;
+      min-width: 74px;
+      white-space: nowrap;
+    }
+
+    @media (max-width: 620px) {
+      .content {
+        width: 100%;
+        padding-left: 14px;
+        padding-right: 14px;
+        overflow-x: hidden;
+      }
+
+      .page-header,
+      .card-header {
+        min-width: 0;
+        max-width: 100%;
+      }
+
+      /* Keep the two expense buttons evenly inside the screen. */
+      .header-actions {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        width: 100%;
+      }
+
+      .header-actions .btn {
+        width: 100%;
+        min-width: 0;
+        padding-left: 10px;
+        padding-right: 10px;
+        white-space: normal;
+      }
+
+      /* Allow dashboard card headings and their buttons to wrap instead of overflowing. */
+      .card-header {
+        flex-wrap: wrap;
+        align-items: flex-start;
+      }
+
+      .card-header > div {
+        flex: 1 1 190px;
+      }
+
+      .card-header > .btn {
+        flex: 0 1 auto;
+        min-width: 0;
+        max-width: 100%;
+        white-space: nowrap;
+      }
+
+      /* Stable three-column mobile expense row. */
+      .expense-list-item {
+        display: grid;
+        grid-template-columns: 44px minmax(0, 1fr) auto;
+        column-gap: 10px;
+        align-items: center;
+        padding: 14px;
+      }
+
+      .expense-list-item .avatar {
+        width: 40px;
+        height: 40px;
+      }
+
+      .expense-list-item .list-main strong {
+        display: -webkit-box;
+        overflow: hidden;
+        white-space: normal;
+        overflow-wrap: anywhere;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        line-height: 1.25;
+      }
+
+      .expense-list-item .list-main span {
+        line-height: 1.35;
+        overflow-wrap: anywhere;
+      }
+
+      .expense-list-item .list-amount {
+        min-width: 68px;
+        max-width: 82px;
+        font-size: 0.94rem;
+        text-align: right;
+      }
+
+      .expense-list-item .list-amount small {
+        white-space: normal;
+      }
+    }
+
+    @media (max-width: 380px) {
+      .expense-list-item {
+        grid-template-columns: 40px minmax(0, 1fr) 64px;
+        gap: 8px;
+        padding: 13px 11px;
+      }
+
+      .expense-list-item .avatar {
+        width: 38px;
+        height: 38px;
+      }
+
+      .expense-list-item .list-amount {
+        min-width: 0;
+        max-width: 64px;
+        font-size: 0.88rem;
+      }
+    }
+  </style>
+
 </head>
 <body>
   <section id="loginPage" class="login-page">
@@ -1566,7 +1716,6 @@
       <div class="login-card">
         <div class="brand" style="margin-bottom:26px"><div class="brand-mark">BB</div> BillBuddy</div>
         <h2>Welcome back</h2>
-        <p>Sign in using an account created for this private BillBuddy group. This starter is not connected to any existing Firebase or GitHub project.</p>
         <form id="loginForm">
           <div class="field">
             <label for="loginEmail">Email</label>
@@ -2210,7 +2359,7 @@
       const myShare = Number(expense.splits?.[state.currentUser.id] || 0);
       const isPayer = expense.paidBy === state.currentUser.id;
       const subline = currentIsAdmin() ? `${payer.displayName} paid · ${expense.participantIds?.length || 0} people` : isPayer ? `You paid ${money(expense.total)}` : `${payer.displayName} paid · your share ${money(myShare)}`;
-      return `<button class="list-item" style="width:100%;border-left:0;border-right:0;border-top:0;background:white;text-align:left" data-expense-id="${escapeHtml(expense.id)}"><div class="avatar">${escapeHtml((expense.title || "E")[0].toUpperCase())}</div><div class="list-main"><strong>${escapeHtml(expense.title || "Untitled expense")}</strong><span>${escapeHtml(formatDate(expense.date))} · ${escapeHtml(subline)}</span></div><div class="list-amount">${money(expense.total)}<small>${expense.items?.length || 0} item${expense.items?.length === 1 ? "" : "s"}</small></div></button>`;
+      return `<button class="list-item expense-list-item" style="width:100%;border-left:0;border-right:0;border-top:0;background:white;text-align:left" data-expense-id="${escapeHtml(expense.id)}"><div class="avatar">${escapeHtml((expense.title || "E")[0].toUpperCase())}</div><div class="list-main"><strong>${escapeHtml(expense.title || "Untitled expense")}</strong><span>${escapeHtml(formatDate(expense.date))} · ${escapeHtml(subline)}</span></div><div class="list-amount">${money(expense.total)}<small>${expense.items?.length || 0} item${expense.items?.length === 1 ? "" : "s"}</small></div></button>`;
     }
 
     function renderExpenseFilters() {
